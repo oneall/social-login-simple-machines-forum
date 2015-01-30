@@ -1,0 +1,279 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+<id>ClaudeOneAll:OneAllSocialLogin</id>
+<version>1.0</version>
+
+<file name="$boarddir/index.php">
+	<operation>
+		<search position="before"><![CDATA[
+		'editpoll2' => array('Poll.php', 'EditPoll2'),]]></search>
+		<add><![CDATA[
+		'oasl' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_config'),]]></add>
+	</operation>
+</file>
+
+<file name="$sourcedir/Subs.php">
+	<operation>
+		<search position="before"><![CDATA[// Admin area 'Forum'.]]></search>
+	<add><![CDATA[
+	// OneAll Social Login (https://docs.oneall.com/plugins/)
+	if (allowedTo(array('admin_forum')))
+	{
+		$context['admin_areas']['oasl'] = array(
+			'title' => $txt['oasl_title'],
+			'areas' => array(
+				'oasl_config' =>  '<a href="' . $scripturl . '?action=oasl;sa=settings;sesc=' . $sc . '">' . $txt['oasl_config'] . '</a>'
+			)
+		);		
+	}	
+]]></add>
+	</operation>
+</file>
+
+
+<file name="$sourcedir/Load.php">
+	<operation>
+		<search position="replace"><![CDATA[// Some basic information...
+	if (!isset($context['html_headers']))
+		$context['html_headers'] = '';]]></search>
+		<add><![CDATA[// Some basic information...
+	if (!isset($context['html_headers']))
+		$context['html_headers'] = '';
+		
+	// OneAll Social Login (https://docs.oneall.com/plugins/)
+	if ( ! empty ($modSettings['oasl_api_subdomain']))
+	{
+		$context['html_headers'] .= "\n\t<!-- OneAll.com / Social Login for SMF -->\n\t";
+		$context['html_headers'] .= '<script type="text/javascript" src="//' . htmlspecialchars ($modSettings['oasl_api_subdomain']) . '.api.oneall.com/socialize/library.js"></script>';
+	}			
+]]></add>
+	</operation>
+</file>
+
+<file name="$themedir/Profile.template.php">
+	<operation>
+		<search position="replace"><![CDATA[if ($context['user']['is_admin'] && !empty($context['allow_edit_username']))]]></search>
+		<add><![CDATA[// OneAll Social Login (https://docs.oneall.com/plugins/)
+			// Only show these settings if you're allowed to edit the account itself (not just the membergroups).
+	if ($context['allow_edit_account'])
+	{
+		// OneAll Social Login (https://docs.oneall.com/plugins/)
+		if (!empty ($modSettings['oasl_api_key']) && !empty ($modSettings['oasl_enabled_providers']))
+		{
+			if ( ! empty ($context['user']['is_owner']) AND ! empty ($context['user']['id']))
+			{
+				global $boardurl, $sourcedir;
+
+				// Include the OneAll Toolbox.
+				require_once($sourcedir . '/OneallSocialLogin.sdk.php');
+
+				//Extract providers
+				$oasl_enabled_providers = explode (',', trim ($modSettings['oasl_enabled_providers']));
+
+				//User Token
+				$oasl_user_token = oneall_social_login_get_user_token_for_id_member_for_user_token($context['user']['id']);
+
+				//Random integer
+				$rand = mt_rand (99999, 9999999);
+
+				?>
+					<tr>
+						<td width="40%">						
+							<?php
+							
+								if ( ! empty ($modSettings['oasl_settings_profile_caption']))
+								{
+									?>
+										<b><?php echo $modSettings['oasl_settings_profile_caption'];?></b><br />
+									<?php
+								}
+								
+								if ( ! empty ($modSettings['oasl_settings_profile_desc']))
+								{
+									?>								
+										<div class="smalltext"><?php echo $modSettings['oasl_settings_profile_desc'];?></div>
+									<?php
+								}
+								
+							?>
+						</td>
+						<td>
+							<div class="oneall_social_login_providers" id="oneall_social_login_providers_<?php echo $rand; ?>"></div>
+								<script type="text/javascript">
+									oneall.api.plugins.social_link.build("oneall_social_login_providers_<?php echo $rand; ?>", {
+										"providers": ['<?php echo implode ("', '", $oasl_enabled_providers);?>'],
+										"user_token": '<?php echo $oasl_user_token; ?>',
+										"callback_uri": '<?php echo $boardurl;?>/oneall_social_login.callback.php?oasl_source=profile;oasl_uid=<?php echo $context['user']['id']; ?>'
+									});
+								</script>
+								<!-- OneAll.com / Social Login for SMF -->
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2"><hr width="100%" size="1" class="hrcolor"></td>
+					</tr>
+				<?php
+			}
+		}
+	}
+		
+		if ($context['user']['is_admin'] && !empty($context['allow_edit_username']))]]></add>
+	</operation>
+</file>
+
+<file name="$themedir/Register.template.php">
+	<operation>
+		<search position="replace"><![CDATA[<form action="', $scripturl, '?action=register2" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator" onsubmit="return verifyAgree();">]]></search>
+		<add><![CDATA[';
+		
+	global $boardurl,$modSettings;
+
+	// OneAll Social Login (https://docs.oneall.com/plugins/)
+	if (!empty ($modSettings['oasl_api_key']) && !empty ($modSettings['oasl_enabled_providers']))
+	{
+		//Extract providers
+		$providers = explode (',', trim ($modSettings['oasl_enabled_providers']));
+
+		//Random integer
+		$rand = mt_rand (99999, 9999999);
+
+		if ( ! empty ($modSettings['oasl_settings_registration_caption']))
+		{
+			?>
+				<table border="0" width="100%" cellpadding="3" cellspacing="0" class="tborder">
+					<tr class="titlebg">
+						<td>
+								<?php echo $modSettings['oasl_settings_registration_caption']; ?>
+						</td>
+					</tr>
+			<?php
+		}
+		?>
+			<tr class="windowbg">
+				<td width="100%">
+					<table width="100%" cellspacing="0" cellpadding="3" border="0">
+						<tbody>
+							<tr>
+							<td>
+								<div class="oneall_social_login_providers" id="oneall_social_login_providers_<?php echo $rand; ?>"></div>
+								<script type="text/javascript">
+									oneall.api.plugins.social_login.build("oneall_social_login_providers_<?php echo $rand; ?>", {
+										"providers": ['<?php echo implode ("', '", $providers);?>'],
+										"callback_uri": '<?php echo $boardurl;?>/oneall_social_login.callback.php?oasl_source=registration'
+									  });
+								</script>
+								<!-- OneAll.com / Social Login for SMF -->
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+	</table><br />
+				<?php
+			}
+
+	echo '
+		<form action="', $scripturl, '?action=register2" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator" onsubmit="return verifyAgree();">
+		]]></add>
+	</operation>
+</file>
+
+<file name="$themedir/Login.template.php">
+	<operation>
+		<search position="replace"><![CDATA[<tr class="windowbg">
+					<td align="center" colspan="2" class="smalltext"><a href="', $scripturl, '?action=reminder">', $txt[315], '</a><br /><br /></td>
+				</tr>]]></search>
+		<add><![CDATA[<tr class="windowbg">
+					<td align="center" colspan="2" class="smalltext"><a href="', $scripturl, '?action=reminder">', $txt[315], '</a><br /><br /></td>
+				</tr>';
+										
+	// OneAll Social Login (https://docs.oneall.com/plugins/)
+	global $boardurl, $modSettings;
+	if (!empty ($modSettings['oasl_api_key']) && !empty ($modSettings['oasl_enabled_providers']))
+	{		
+		//Extract providers
+		$providers = explode (',', trim ($modSettings['oasl_enabled_providers']));
+		
+		//Random integer
+		$rand = mt_rand (99999, 9999999);
+		
+		?>
+			<hr />			
+			<?php
+				if ( ! empty ($modSettings['oasl_settings_login_caption']))
+				{
+					?>
+						<tr class="windowbg">
+							<td align="center" colspan="2">
+								<b><?php echo $modSettings['oasl_settings_login_caption']; ?></b<>
+							</td>
+						</tr>
+					<?php
+				}
+			?>
+				<tr class="windowbg">
+					 <td align="center" colspan="2">
+						<div class="oneall_social_login_providers" id="oneall_social_login_providers_<?php echo $rand; ?>" style="width:70%"></div>
+						<script type="text/javascript">
+							oneall.api.plugins.social_login.build("oneall_social_login_providers_<?php echo $rand; ?>", {
+								"providers": ['<?php echo implode ("', '", $providers);?>'], 
+								"callback_uri": '<?php echo $boardurl;?>/oneall_social_login.callback.php?oasl_source=login',
+							});
+						</script>
+						<!-- OneAll.com / Social Login for SMF -->	
+					</td>
+				</tr>		
+			</p>			
+		<?php
+	}
+		
+echo '				
+
+]]></add>
+	</operation>
+
+</file>
+
+
+<file name="$sourcedir/Profile.php">
+	<operation>
+		<search position="replace"><![CDATA[$context['require_password'] = in_array($context['menu_item_selected'], array('account'));]]></search>
+		<add><![CDATA[		
+	$context['require_password'] = in_array($context['menu_item_selected'], array('account'));
+		
+	// OneAll Social Login (https://docs.oneall.com/plugins/)
+	if ( ! isset ($smcFunc))
+	{
+		global $smcFunc;
+	}
+		
+	// The user has no password to login, so disable it.
+	if ( ! isset ($db_prefix))
+	{
+		global $db_prefix;
+	}
+	$result = db_query("SELECT user_token FROM {$db_prefix}oneall_social_login_identities WHERE id_member ='".intval ($memID)."'", __FILE__, __LINE__);
+	$userRow = mysql_fetch_assoc($result);
+	if (!empty($userRow['user_token']))
+	{
+		$context['require_password'] =  false;
+	}]]></add>
+	</operation>
+</file>
+
+
+<file name="$sourcedir/Subs-Members.php">
+	<operation>
+		<search position="replace"><![CDATA[// Delete personal messages.]]></search>
+		<add><![CDATA[
+	// OneAll Social Login (https://docs.oneall.com/plugins/)
+	db_query("DELETE FROM {$db_prefix}oneall_social_login_identities WHERE id_member $condition");
+	
+	// Delete personal messages.]]></add>
+	</operation>
+</file>	
+
+
+</modification>
