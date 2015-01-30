@@ -2,7 +2,7 @@
 <!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
 <modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
 <id>OneAll:OneAllSocialLogin</id>
-<version>2.6</version>
+<version>3.3</version>
 
 <file name="$languagedir/Modifications.english.php">
 	<operation>
@@ -13,6 +13,8 @@ $txt['oasl_title'] = 'OneAll Social Login';
 $txt['oasl_config'] = 'Configuration';
 $txt['oasl_settings_descr'] = 'OneAll Social Login Settings';
 $txt['oasl_user_does_not_exist'] = "<strong>This social network has not yet been linked to an account.</strong><br /><br />Please use the registration form to create a new account. If you already have an account, open your profile settings to connect the social network to it.";
+$txt['oasl_user_may_not_register'] = 'Sorry, but the admistration has disabled the registration for new users.';
+$txt['oasl_user_require_activation'] = 'Your account has been created but it needs to be verified. Please check your mailbox and click on the link in the verification email.';
 
 ]]></add>
 		</operation>
@@ -145,10 +147,10 @@ $txt['oasl_user_does_not_exist'] = "<strong>This social network has not yet been
 	{
 		global $boardurl;
 		
-		//Extract providers
+		// Extract the chosen providers.
 		$providers = explode (',', trim ($modSettings['oasl_enabled_providers']));
 		
-		//Random integer
+		// Compute a random integer.
 		$rand = mt_rand (99999, 9999999);
 			
 		echo '
@@ -156,16 +158,37 @@ $txt['oasl_user_does_not_exist'] = "<strong>This social network has not yet been
 				<span class="botslice"><span></span></span>
 			</div>';			
 
-		if ( ! empty ($modSettings['oasl_settings_registration_caption']))		
+		// Add a caption.
+		if ( ! empty ($modSettings['oasl_settings_registration_caption']))
+		{		
 			echo '
 				<div class="title_bar">
 					<h4 class="titlebg">
 						<strong>'.$modSettings['oasl_settings_registration_caption'].'
 					</h4>
-				</div>';		
-		else		
+				</div>';
+		}		
+		// Or otherwise just a separation.
+		else
+		{		
 			echo '
-				<hr />';		
+				<hr />';
+		}		
+		
+		// Display error messages if there are any.		
+		if ( isset ($_REQUEST['oasl_err']))
+		{
+			switch ($_REQUEST['oasl_err'])
+			{
+				case 'user_does_not_exist':
+					echo '<p class="error">'.$txt['oasl_user_does_not_exist'].'</p>';
+				break;
+				
+				case 'user_registration_disabled':
+					echo '<p class="error">'.$txt['oasl_user_may_not_register'].'</p>';
+				break;			
+			}
+		}
 
 		echo '	
 			<div class="windowbg2">
@@ -212,11 +235,21 @@ function template_oneall_social_login()
 		echo '<hr />';		
 				
 		// Display error messages if there are any.		
-		if ( ! empty ($_REQUEST['oasl_err']))
+		if ( isset ($_REQUEST['oasl_err']))
 		{
-			if ($_REQUEST['oasl_err'] == 'user_does_not_exist')
+			switch ($_REQUEST['oasl_err'])
 			{
-				echo '<p class="error">'.$txt['oasl_user_does_not_exist'].'</p>';
+				case 'user_does_not_exist':
+					echo '<p class="error">'.$txt['oasl_user_does_not_exist'].'</p>';
+				break;
+				
+				case 'user_require_activation':
+					echo '<p class="error">'.$txt['oasl_user_require_activation'].'</p>';
+				break;
+				
+				case 'user_registration_disabled':
+					echo '<p class="error">'.$txt['oasl_user_may_not_register'].'</p>';
+				break;			
 			}
 		}
 		

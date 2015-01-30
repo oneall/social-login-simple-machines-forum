@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   	OneAll Social Login
- * @copyright 	Copyright 2012 http://www.oneall.com - All rights reserved.
+ * @copyright 	Copyright 2011-2015 http://www.oneall.com - All rights reserved.
  * @license   	GNU/GPL 2 or later
  *
  * This program is free software; you can redistribute it and/or
@@ -226,7 +226,7 @@ function oneall_social_login_login_callback ()
 			// This is a new user.
 			else
 			{
-				// Account linking is enabled.
+				// Account linking via Social Link is enabled.
 				if (!empty ($modSettings ['oasl_settings_link_accounts']))
 				{
 					// Account linking only works if the email address has been verified.
@@ -254,14 +254,32 @@ function oneall_social_login_login_callback ()
 			// Create a user new account.
 			else
 			{
-				// Prevent registration through login form?
-				if ($oasl_source == 'login' AND ! empty ($modSettings ['oasl_settings_login_allow_new']))
+				// What is being done?
+				$action = 'register';
+
+				// Prevent registration through the login form?
+				if ($oasl_source == 'login' && empty ($modSettings ['oasl_settings_login_allow_new']))
 				{
 					redirectexit ('action=login;oasl_err=user_does_not_exist');
 				}
 
-				// What is being done?
-				$action = 'register';
+				// Retrieve the activation flag.
+				$data ['activation_flag'] = oneall_social_login_get_activation_flag();
+
+				// Make sure we have the email address if we must handle approvals.
+				if (in_array ($data ['activation_flag'], array ('activation', 'approval')))
+				{
+					// Ask the user to enter his email address manually.
+					if (empty ($data['user_email']))
+					{
+						redirectexit ('action=oasl_registration');
+					}
+				}
+				// Make sure the registration is enabled.
+				elseif ($data ['activation_flag'] == 'disabled')
+				{
+					redirectexit (($oasl_source == 'registration' ? 'action=register;step=2' : 'action=login').';oasl_err=user_registration_disabled');
+				}
 
 				// Either the social network provides no email address at all, or it's a duplicate and we don't have account linking enabled.
 				if (empty ($data['user_email']) || oneall_social_login_get_id_member_for_email_address ($data ['user_email']) !== false)
@@ -283,15 +301,25 @@ function oneall_social_login_login_callback ()
 			}
 
 			// Login.
-			if (!empty ($id_member) AND oneall_social_login_login_user ($id_member))
+			if (!empty ($id_member))
 			{
-				if ($action == 'login')
+				if (oneall_social_login_login_user ($id_member, $error_flag) === true)
 				{
-					redirectexit ();
+					if ($action == 'login')
+					{
+						redirectexit ();
+					}
+					else
+					{
+						redirectexit ('action=profile');
+					}
 				}
 				else
 				{
-					redirectexit ('action=profile');
+					if ($error_flag == 'require_activation')
+					{
+						redirectexit ('action=login;oasl_err=user_require_activation');
+					}
 				}
 			}
 		}
@@ -331,15 +359,15 @@ function oneall_social_login_callback ()
  */
 function oneall_social_login_registration ()
 {
+	// Setup global forum vars.
+	global $txt, $boarddir, $sourcedir, $user_settings, $context, $modSettings, $smcFunc;
+
+	// Include the OneAll SDK.
+	require_once($sourcedir . '/OneallSocialLogin.sdk.php');
+
 	// Make sure we have a social network profile in the session.
 	if (isset($_SESSION) && !empty($_SESSION ['oasl_session_open']) && !empty($_SESSION ['oasl_social_data']))
 	{
-		// Setup global forum vars.
-		global $txt, $boarddir, $sourcedir, $user_settings, $context, $modSettings, $smcFunc;
-
-		// Include the OneAll SDK.
-		require_once($sourcedir . '/OneallSocialLogin.sdk.php');
-
 		// User Action
 		$sa = !empty($_REQUEST['sa']) ? $_REQUEST['sa'] : '';
 
@@ -403,15 +431,40 @@ function oneall_social_login_registration ()
 					$data['user_email'] = $oasl_user_email;
 					$data['hide_email'] = empty ($oasl_user_email_public) ? 1 : 0;
 
-					// Create a new account.
-					$id_member = oneall_social_login_create_user ($data);
-					if (!empty ($id_member) AND oneall_social_login_login_user ($id_member))
+					// Retrieve the activation flag.
+					$data ['activation_flag'] = oneall_social_login_get_activation_flag();
+
+					// Make sure registration is enabled.
+					if ($data ['activation_flag'] == 'disabled')
 					{
-						// Remove plugin session data
+						// Remove plugin session data.
 						oneall_social_login_clear_session();
 
-						//Redirect to forum index
-						redirectexit ();
+						// Redirect to registration page and display an error.
+						redirectexit ('action=register;step=2;oasl_err=user_registration_disabled');
+					}
+
+					// Create a new account.
+					$id_member = oneall_social_login_create_user ($data);
+					if (!empty ($id_member))
+					{
+						// Remove plugin session data.
+						oneall_social_login_clear_session();
+
+						// Try to login the user.
+						if (oneall_social_login_login_user ($id_member, $error_flag) === true)
+						{
+							// Redirect to forum index.
+							redirectexit ();
+						}
+						// Login failed.
+						else
+						{
+							if ($error_flag == 'require_activation')
+							{
+								redirectexit ('action=login;oasl_err=user_require_activation');
+							}
+						}
 					}
 				}
 			}
@@ -437,7 +490,7 @@ function oneall_social_login_registration ()
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// ADMINISTRATION
+// ISTRATION
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -559,6 +612,9 @@ function oneall_social_login_verify_api_settings ()
 	$oasl_api_subdomain = !empty($_POST['oasl_api_subdomain']) ? trim(strtolower($_POST['oasl_api_subdomain'])) : '';
 	$oasl_api_key = !empty($_POST['oasl_api_key']) ? trim($_POST['oasl_api_key']) : '';
 	$oasl_api_secret = !empty($_POST['oasl_api_secret']) ? trim($_POST['oasl_api_secret']) : '';
+	$oasl_api_handler = (!empty($_POST['oasl_api_handler']) && $_POST['oasl_api_handler'] == 'use_fsockopen') ? 'fsockopen' : 'curl';
+	$oasl_api_port = (!empty($_POST['oasl_api_port']) && $_POST['oasl_api_port'] == 80) ? 80 : 443;
+	$oasl_api_use_https = ($oasl_api_port == 80 ? false : true);
 
 	// Full domain entered.
 	if (preg_match("/([a-z0-9\-]+)\.api\.oneall\.com/i", $oasl_api_subdomain, $matches))
@@ -568,6 +624,8 @@ function oneall_social_login_verify_api_settings ()
 
 	// Update Settings.
 	$values = array();
+	$values['oasl_api_handler'] = $oasl_api_handler;
+	$values['oasl_api_port'] = $oasl_api_port;
 	$values['oasl_api_subdomain'] = $oasl_api_subdomain;
 	$values['oasl_api_key'] = $oasl_api_key;
 	$values['oasl_api_secret'] = $oasl_api_secret;
@@ -580,18 +638,14 @@ function oneall_social_login_verify_api_settings ()
 	}
 	else
 	{
-		// Read settings.
-		$oasl_api_connection_handler = (!empty($_POST['oasl_api_handler']) && $_POST['oasl_api_handler'] == 'fsockopen') ? 'fsockopen' : 'curl';
-		$oasl_api_connection_use_https = (!empty($_POST['oasl_api_port']) && $_POST['oasl_api_port'] == 80) ? false : true;
-
 		// Check connection handler.
-		if ($oasl_api_connection_handler == 'fsockopen')
+		if ($oasl_api_handler == 'fsockopen')
 		{
-			$status = !oneall_social_login_check_fsockopen($oasl_api_connection_use_https) ? 'error_selected_handler_faulty' : '';
+			$status = !oneall_social_login_check_fsockopen($oasl_api_use_https) ? 'error_selected_handler_faulty' : '';
 		}
 		else
 		{
-			$status = !oneall_social_login_check_curl($oasl_api_connection_use_https) ? 'error_selected_handler_faulty' : '';
+			$status = !oneall_social_login_check_curl($oasl_api_use_https) ? 'error_selected_handler_faulty' : '';
 		}
 
 		//If we have a status then we have a problem
@@ -608,10 +662,10 @@ function oneall_social_login_verify_api_settings ()
 				$oasl_api_domain = $oasl_api_subdomain . '.api.oneall.com';
 
 				//Connection to
-				$api_resource_url = ($oasl_api_connection_use_https ? 'https' : 'http') . '://' . $oasl_api_domain . '/tools/ping.json';
+				$api_resource_url = ($oasl_api_use_https ? 'https' : 'http') . '://' . $oasl_api_domain . '/tools/ping.json';
 
 				//Get connection details
-				$result = oneall_social_login_do_api_request($oasl_api_connection_handler, $api_resource_url, array('api_key' => $oasl_api_key, 'api_secret' => $oasl_api_secret), 15);
+				$result = oneall_social_login_do_api_request($oasl_api_handler, $api_resource_url, array('api_key' => $oasl_api_key, 'api_secret' => $oasl_api_secret), 15);
 				$result_tag = (is_object($result) && property_exists($result, 'http_code') && property_exists($result, 'http_data')) ? $result->http_code : 'error';
 
 
@@ -760,7 +814,7 @@ function oneall_social_login_config_save ()
 	checkSession('post');
 
 	// API Connection Handler.
-	$oasl_api_handler = (!empty($_POST['oasl_api_handler']) && $_POST['oasl_api_handler'] == 'fsockopen') ? 'fsockopen' : 'curl';
+	$oasl_api_handler = (!empty($_POST['oasl_api_handler']) && $_POST['oasl_api_handler'] == 'use_fsockopen') ? 'fsockopen' : 'curl';
 	$oasl_api_port = (!empty($_POST['oasl_api_port']) && $_POST['oasl_api_port'] == 80) ? 80 : 443;
 
 	// API Settings.
@@ -777,6 +831,7 @@ function oneall_social_login_config_save ()
 	$oasl_settings_use_avatars = !empty($_POST['oasl_settings_use_avatars']) ? 1 : 0;
 	$oasl_settings_login_allow_new = !empty($_POST['oasl_settings_login_allow_new']) ? 1 : 0;
 	$oasl_settings_ask_for_email = !empty($_POST['oasl_settings_ask_for_email']) ? 1 : 0;
+	$oasl_settings_reg_method =  ! in_array ($_POST['oasl_settings_reg_method'], array ('auto', 'system', 'email', 'admin', 'disable')) ? 'auto' : $_POST['oasl_settings_reg_method'];
 
 	// Full domain entered.
 	if (preg_match("/([a-z0-9\-]+)\.api\.oneall\.com/i", $oasl_api_subdomain, $matches))
@@ -810,8 +865,8 @@ function oneall_social_login_config_save ()
 	$values['oasl_settings_link_accounts'] = $oasl_settings_link_accounts;
 	$values['oasl_settings_use_avatars'] = $oasl_settings_use_avatars;
 	$values['oasl_settings_login_allow_new'] = $oasl_settings_login_allow_new;
-
 	$values['oasl_settings_ask_for_email'] = $oasl_settings_ask_for_email;
+	$values['oasl_settings_reg_method'] = $oasl_settings_reg_method;
 
 	// Enabled Providers.
 	$values['oasl_enabled_providers'] = implode(',', $oasl_enabled_providers);

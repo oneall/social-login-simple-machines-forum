@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   	OneAll Social Login
- * @copyright 	Copyright 2012 http://www.oneall.com - All rights reserved.
+ * @copyright 	Copyright 2011-2015 http://www.oneall.com - All rights reserved.
  * @license   	GNU/GPL 2 or later
  *
  * This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ if (!defined('SMF'))
 }
 
 //OneAll Social Login Version
-define('OASL_VERSION', '2.6');
+define('OASL_VERSION', '3.2');
 
 
 /**
@@ -179,7 +179,7 @@ function oneall_social_login_extract_social_network_profile ($social_data)
 /**
  * Logs a given user in.
  */
-function oneall_social_login_login_user ($id_member)
+function oneall_social_login_login_user ($id_member, &$error_flag)
 {
 	// Setup global forum vars.
 	global $txt, $boarddir, $sourcedir, $user_settings, $context, $modSettings, $smcFunc;
@@ -203,10 +203,19 @@ function oneall_social_login_login_user ($id_member)
 		if (!empty ($user_settings ['id_member']))
 		{
 			//Set Login Cookie Expiration (Sources/LogInOut.php)
-			//$modSettings['cookieTime'] = 3153600;
+			$modSettings['cookieTime'] = 3153600;
 
 			// Login.
 			require_once($sourcedir . '/LogInOut.php');
+
+			// Check their activation status.
+			if (!checkActivation())
+			{
+				$error_flag = 'require_activation';
+				return false;
+			}
+
+			// Login.
 			DoLogin ();
 
 			//Done
@@ -220,6 +229,75 @@ function oneall_social_login_login_user ($id_member)
 
 
 /**
+ * Computes the activation flag for new users.
+ */
+function oneall_social_login_get_activation_flag ()
+{
+	// Global vars.
+	global $modSettings;
+
+	// Make sure registration of new members is allowed.
+	if ( ! empty ($modSettings ['oasl_settings_reg_method']))
+	{
+		// Automatic Approval.
+		if ($modSettings ['oasl_settings_reg_method'] == 'auto')
+		{
+			return 'nothing';
+		}
+
+		// Registration is disabled.
+		if ($modSettings ['oasl_settings_reg_method'] == 'disable')
+		{
+			return 'disabled';
+		}
+
+		// Email Approval.
+		if ($modSettings ['oasl_settings_reg_method'] == 'email')
+		{
+			return 'activation';
+		}
+
+		// Admin Approval.
+		if ($modSettings ['oasl_settings_reg_method'] == 'admin')
+		{
+			return 'approval';
+		}
+
+		// We have to use the system-wide settings.
+		if ($modSettings ['oasl_settings_reg_method'] == 'system')
+		{
+			// Automatic Approval.
+			if (empty ($modSettings ['registration_method']))
+			{
+				return 'nothing';
+			}
+
+			// Registration disabled.
+			if ($modSettings ['registration_method'] == '3')
+			{
+				return 'disabled';
+			}
+
+			// Email Approval.
+			if ($modSettings ['registration_method'] == '1')
+			{
+				return 'activation';
+			}
+
+			// Admin Approval.
+			if ($modSettings ['registration_method'] == '2')
+			{
+				return 'approval';
+			}
+		}
+	}
+
+	// Automatic Approval.
+	return 'nothing';
+}
+
+
+/**
  * Creates a new user based on the given data.
  */
 function oneall_social_login_create_user (Array $data)
@@ -227,7 +305,7 @@ function oneall_social_login_create_user (Array $data)
 	if (is_array ($data) && ! empty ($data['user_token']) && ! empty ($data['identity_token']))
 	{
 		// Global vars.
-		global $boarddir, $sourcedir, $user_settings, $context, $modSettings, $smcFunc;
+		global $boarddir, $sourcedir, $user_settings, $user_info, $context, $modSettings, $smcFunc;
 
 		// Registration functions.
 		require_once($sourcedir . '/Subs-Members.php');
@@ -286,14 +364,23 @@ function oneall_social_login_create_user (Array $data)
 			$regOptions ['extra_register_vars'] ['avatar'] = $data['user_picture'];
 		}
 
-		// We don't need activation.
-		$regOptions ['require'] = 'nothing';
+		// Account activation settings.
+		$regOptions ['require'] = (isset ($data['activation_flag']) ? $data['activation_flag'] : 'nothing');
 
 		// Do not check the password strength.
 		$regOptions ['check_password_strength'] = false;
 
 		// Compute a unique username.
 		$regOptions ['username'] = $data['user_login'];
+
+		//Remove characters that SMF does not permit (See Sources/Subs-Members.php)
+		$regOptions ['username'] = preg_replace('~&#(?:\\d{1,7}|x[0-9a-fA-F]{1,6});~', '', $regOptions['username']);
+		$regOptions ['username'] = preg_replace('~[<>&"\'=\\\\]~', '', $regOptions['username']);
+
+		// Cut if username is too long.
+		$regOptions ['username'] = substr ($regOptions ['username'], 0, 25);
+
+		//Make sure we have a valid username
 		if (isReservedName ($regOptions ['username']))
 		{
 			$i = 1;
@@ -305,8 +392,7 @@ function oneall_social_login_create_user (Array $data)
 			$regOptions ['username'] = $tmp;
 		}
 
-		// Cut if username is too long.
-		$regOptions ['username'] = substr ($regOptions ['username'], 0, 25);
+
 
 		// Encode.
 		if (!$context['utf8'])
@@ -317,12 +403,15 @@ function oneall_social_login_create_user (Array $data)
 			$regOptions ['username'] = utf8_decode($regOptions ['username']);
 		}
 
-		//Other settings.
+		// Other settings.
 		$modSettings ['disableRegisterCheck'] = true;
+
+		// Otherwise registerMember might block.
 		$user_info ['is_guest'] = true;
 
 		// Create a new user account.
 		$id_member = registerMember ($regOptions);
+
 		if (is_numeric ($id_member))
 		{
 			// Tie the tokens to the newly created member.
@@ -525,7 +614,7 @@ function oneall_social_login_get_id_member_for_email_address ($email_address)
 
 
 /**
- * Create a random and unique email address.
+ * Created a random and unique email address.
  */
 function oneall_social_login_create_rand_email_address ()
 {
@@ -646,19 +735,26 @@ function oneall_social_login_curl_request ($url, $options = array(), $timeout = 
  */
 function oneall_social_login_check_fsockopen ($secure = true)
 {
-	//Check if FSOCKOPEN is installed and enabled
-	if (function_exists('fsockopen') && !in_array('fsockopen', oneall_social_get_disabled_functions()))
+	// Check if FSOCKOPEN is installed and enabled.
+	if (function_exists('fsockopen') && function_exists ('fwrite'))
 	{
-		//Check if a connection can be made to OneAll
-		$result = oneall_social_login_fsockopen_request(($secure ? 'https' : 'http') . '://www.oneall.com/ping.html');
-		if ((is_object($result) && property_exists($result, 'http_code') && $result->http_code == 200 && property_exists($result, 'http_data') && strtolower($result->http_data) == 'ok'))
+		// Read disabled functions.
+		$disabled_functions = oneall_social_get_disabled_functions ();
+
+		// And make sure FSOCKOPEN is not part of them.
+		if (!in_array('fsockopen', $disabled_functions) && !in_array('fwrite', $disabled_functions))
 		{
-			//FSOCKOPEN is available
-			return true;
+			// Check if a connection can be made to OneAll.
+			$result = oneall_social_login_fsockopen_request(($secure ? 'https' : 'http') . '://www.oneall.com/ping.html');
+			if ((is_object($result) && property_exists($result, 'http_code') && $result->http_code == 200 && property_exists($result, 'http_data') && strtolower($result->http_data) == 'ok'))
+			{
+				// FSOCKOPEN is available.
+				return true;
+			}
 		}
 	}
 
-	//FSOCKOPEN is not available or the firewall blocks the connection
+	// FSOCKOPEN is not available or the firewall blocks the connection.
 	return true;
 }
 

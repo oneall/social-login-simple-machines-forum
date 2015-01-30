@@ -43,5 +43,3 @@ http://custom.simplemachines.org/mods/index.php?mod=3580
 ## About Us
 Social Login is maintained by [OneAll](http://www.oneall.com/). OneAll, a technology company offering a set of 
 web-delivered tools and services for establishing and optimizing a site's connection with social networks.
-
-**Fork us on Github!**

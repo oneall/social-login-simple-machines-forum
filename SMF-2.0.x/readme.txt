@@ -17,28 +17,33 @@ OneAll Social Login integrates with your existing registration system so you
 and your users don't have to start from scratch.
 
 
-[b]20+ Supported Social Networks[/b]
+[b]25+ Supported Social Networks[/b]
+- Amazon
+- Blogger
+- Disqus
 - Facebook
-- Twitter
-- Google
-- LinkedIn
 - Foursquare
-- Yahoo
-- OpenID
 - Github.com
-- Paypal
+- Google
+- Instagram
+- LinkedIn
 - LiveJournal
-- Skyrock.com
-- WordPress.com
-- Hyves
-- VKontakte
 - Mail.ru
-- Steam Community
 - Odnoklassniki
+- OpenID
+- PayPal
+- Reddit
+- Skyrock.com
 - StackExchange
 - Steam
-- YouTube
+- Twitch.tv
+- Twitter
+- Vimeo
+- VKontakte
 - Windows Live
+- WordPress.com
+- Yahoo
+- YouTube
 
 
 [b]About Us[/b]

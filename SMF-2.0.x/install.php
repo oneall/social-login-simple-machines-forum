@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   	OneAll Social Login
- * @copyright 	Copyright 2012 http://www.oneall.com - All rights reserved.
+ * @copyright 	Copyright 2011-2015 http://www.oneall.com - All rights reserved.
  * @license   	GNU/GPL 2 or later
  *
  * This program is free software; you can redistribute it and/or
@@ -136,10 +136,12 @@ $oasl_settings ['oasl_settings_profile_desc'] = 'Link your forum account to one 
 $oasl_settings ['oasl_settings_link_accounts'] = '1';
 $oasl_settings ['oasl_settings_use_avatars'] = '1';
 $oasl_settings ['oasl_settings_ask_for_email'] = '1';
+$oasl_settings ['oasl_settings_reg_method'] = 'auto';
+$oasl_settings ['oasl_settings_allow_login_new'] = '1';
 
 
 // Available and enabled providers.
-$oasl_settings ['oasl_providers'] = 'facebook,twitter,google,linkedin,yahoo,github,foursquare,youtube,skyrock,openid,wordpress,hyves,paypal,livejournal,steam,windowslive,blogger,disqus,stackexchange,vkontakte,odnoklassniki,mailru';
+$oasl_settings ['oasl_providers'] = 'amazon,blogger,disqus,facebook,foursquare,github,google,instagram,linkedin,livejournal,mailru,odnoklassniki,openid,paypal,reddit,skyrock,stackexchange,steam,twitch,twitter,vimeo,vkontakte,windowslive,wordpress,yahoo,youtube';
 $oasl_settings ['oasl_enabled_providers'] = 'facebook,twitter,google,linkedin';
 
 // Update settings.

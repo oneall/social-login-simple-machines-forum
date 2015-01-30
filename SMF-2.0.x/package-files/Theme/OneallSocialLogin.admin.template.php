@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   	OneAll Social Login
- * @copyright 	Copyright 2012 http://www.oneall.com - All rights reserved.
+ * @copyright 	Copyright 2011-2015 http://www.oneall.com - All rights reserved.
  * @license   	GNU/GPL 2 or later
  *
  * This program is free software; you can redistribute it and/or
@@ -43,7 +43,7 @@ function template_oneall_social_login_config ()
 				<li><?php echo $txt['oasl_other_plugins']; ?></li>
 			</ul>
 		</div>
-		<form method="post" name="creator" id="creator" action="<?php echo $scripturl; ?>?action=oasl" accept-charset="<?php echo $context['character_set']; ?>">
+		<form method="post" name="creator" id="creator" action="<?php echo $scripturl; ?>?action=admin;area=oasl" accept-charset="<?php echo $context['character_set']; ?>">
 			<div class="cat_bar" id="oasl_api_connection_handler">
 				<h3 class="catbg">
 					<span class="ie6_header floatleft"><?php echo $txt['oasl_api_connection_handler']; ?></span>
@@ -57,13 +57,13 @@ function template_oneall_social_login_config ()
 							<strong><?php echo $txt['oasl_api_connection_method']; ?></strong>
 						</dt>
 						<dd>
-							<input type="radio" id="oasl_api_handler_curl" name="oasl_api_handler" value="curl"<?php echo ($modSettings['oasl_api_handler'] <> 'fsockopen' ? ' checked="checked"' : ''); ?> />
+							<input type="radio" id="oasl_api_handler_curl" name="oasl_api_handler" value="use_curl"<?php echo ($modSettings['oasl_api_handler'] <> 'fsockopen' ? ' checked="checked"' : ''); ?> />
 							<label for="oasl_api_handler_curl"><?php echo $txt['oasl_api_connection_use_curl']; ?> <strong>(<?php echo $txt['oasl_default']; ?>)</strong></label>
 							<div class="description"><?php echo $txt['oasl_api_connection_use_curl_desc']; ?></div>
 						</dd>
 						<dt>&nbsp;</dt>
 						<dd>
-							<input type="radio" id="oasl_api_handler_fsockopen" name="oasl_api_handler" value="fsockopen"<?php echo ($modSettings['oasl_api_handler'] == 'fsockopen' ? ' checked="checked"' : ''); ?> />
+							<input type="radio" id="oasl_api_handler_fsockopen" name="oasl_api_handler" value="use_fsockopen"<?php echo ($modSettings['oasl_api_handler'] == 'fsockopen' ? ' checked="checked"' : ''); ?> />
 							<label for="oasl_api_handler_fsockopen"><?php echo $txt['oasl_api_connection_use_fsockopen']; ?></label>
 							<div class="description"><?php echo $txt['oasl_api_connection_use_fsockopen_desc']; ?></div>
 						</dd>
@@ -267,6 +267,33 @@ function template_oneall_social_login_config ()
 						</dd>
 					</dl>
 
+
+					<hr class="hrcolor clear" />
+					<dl>
+						<dt>
+							<strong><?php echo $txt['oasl_settings_reg_method']; ?></strong><br />
+							<span class="smalltext"><?php echo $txt['oasl_settings_reg_method_desc']; ?></span>
+						</dt>
+						<dd>
+							<select id="oasl_settings_reg_method" name="oasl_settings_reg_method">
+								<?php
+									$reg_methods = array ('auto', 'system', 'email', 'admin', 'disable');
+
+									if (empty ($modSettings['oasl_settings_reg_method']) || ! in_array ($modSettings['oasl_settings_reg_method'], $reg_methods))
+									{
+										$modSettings['oasl_settings_reg_method'] = 'auto';
+									}
+
+									foreach ($reg_methods AS $reg_method)
+									{
+										?>
+											<option value="<?php echo $reg_method; ?>"<?php echo (($modSettings['oasl_settings_reg_method'] == $reg_method) ? ' selected="selected"' : ''); ?>><?php echo $txt['oasl_settings_reg_method_' . $reg_method]; ?></option>
+										<?php
+									}
+								?>
+							</select>
+						</dd>
+					</dl>
 
 					<hr class="hrcolor clear" />
 					<dl>

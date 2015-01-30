@@ -1,6 +1,6 @@
 /**
  * @package   	OneAll Social Login
- * @copyright 	Copyright 2012 http://www.oneall.com - All rights reserved.
+ * @copyright 	Copyright 2011-2015 http://www.oneall.com - All rights reserved.
  * @license   	GNU/GPL 2 or later
  *
  * This program is free software; you can redistribute it and/or
@@ -56,7 +56,7 @@
   margin-right: 5px;
 }
 
-.oasl_provider.oasl_provider_aol {
+.oasl_provider.oasl_provider_vimeo {
   background-position: -2px -1px;
 }
 
@@ -76,7 +76,7 @@
   background-position: -150px -1px;
 }
 
-.oasl_provider.oasl_provider_hyves {
+.oasl_provider.oasl_provider_reddit {
   background-position: -187px -1px;
 }
 
@@ -150,4 +150,20 @@
 
 .oasl_provider.oasl_provider_odnoklassniki {
   background-position: -1038px -1px;
+}
+
+.oasl_provider.oasl_provider_deviantart {
+  background-position: -1075px -1px;
+}
+
+.oasl_provider.oasl_provider_twitch {
+  background-position: -1112px -1px;
+}
+
+.oasl_provider.oasl_provider_amazon {
+  background-position: -1149px -1px;
+}
+
+.oasl_provider.oasl_provider_instagram {
+  background-position: -1186px -1px;
 }
