@@ -28,7 +28,7 @@ if (!defined('SMF'))
 }
 
 //OneAll Social Login Version
-define('OASL_VERSION', '3.2');
+define('OASL_VERSION', '3.3');
 
 
 /**
