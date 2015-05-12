@@ -1,2 +1,1 @@
-<strong>OneAll Social Login has been installed successfully!</strong><br />
-Please wait, you will be redirected to the settings page...
+OneAll Social Login has successfully been installed! You will now be redirected to the settings page.
