@@ -87,7 +87,7 @@ function template_oneall_social_login_config ()
 					</dl>
 				</div>
 				<div>
-					<input type="button" class="button_submit" id="oasl_autodetect_button" value="<?php echo $txt['oasl_api_connection_autodetect']; ?>" />
+					<input type="button" class="oasl_button button_submit" id="oasl_autodetect_button" value="<?php echo $txt['oasl_api_connection_autodetect']; ?>" />
 					<?php
 						if ($modSettings['oasl_action'] == 'autodetect')
 						{
@@ -143,7 +143,7 @@ function template_oneall_social_login_config ()
 					</dl>
 				</div>
 				<div>
-					<input type="button" class="button_submit" id="oasl_verify_button" value="<?php echo $txt['oasl_api_verify']; ?>" />
+					<input type="button" class="oasl_button button_submit" id="oasl_verify_button" value="<?php echo $txt['oasl_api_verify']; ?>" />
 					<?php
 						if ($modSettings['oasl_action'] == 'verify')
 						{
@@ -243,6 +243,7 @@ function template_oneall_social_login_config ()
 							<input type="text" id="oasl_settings_profile_desc" name="oasl_settings_profile_desc" size="50" value="<?php echo htmlspecialchars($modSettings['oasl_settings_profile_desc']); ?>" />
 						</dd>
 					</dl>
+
 					<hr class="hrcolor clear" />
 					<dl>
 						<dt>
@@ -252,6 +253,18 @@ function template_oneall_social_login_config ()
 						<dd>
 							<input type="checkbox" id="oasl_settings_use_avatars" name="oasl_settings_use_avatars" value="1"<?php echo (!empty($modSettings['oasl_settings_use_avatars']) ? ' checked="checked"' : ''); ?> />
 							<label for="oasl_settings_use_avatars"><?php echo $txt['oasl_settings_social_avatar_yes']; ?></label>
+						</dd>
+					</dl>
+
+					<hr class="hrcolor clear" />
+					<dl>
+						<dt>
+							<strong><?php echo $txt['oasl_settings_social_avatar_upload']; ?></strong><br />
+							<span class="smalltext"><?php echo $txt['oasl_settings_social_avatar_upload_desc']; ?></span>
+						</dt>
+						<dd>
+							<input type="checkbox" id="oasl_settings_upload_avatars" name="oasl_settings_upload_avatars" value="1"<?php echo (!empty($modSettings['oasl_settings_upload_avatars']) ? ' checked="checked"' : ''); ?> />
+							<label for="oasl_settings_upload_avatars"><?php echo $txt['oasl_settings_social_avatar_upload_yes']; ?></label>
 						</dd>
 					</dl>
 

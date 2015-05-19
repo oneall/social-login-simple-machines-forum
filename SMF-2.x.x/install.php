@@ -135,10 +135,10 @@ $oasl_settings ['oasl_settings_profile_caption'] = 'Social Networks';
 $oasl_settings ['oasl_settings_profile_desc'] = 'Link your forum account to one or more social network accounts.';
 $oasl_settings ['oasl_settings_link_accounts'] = '1';
 $oasl_settings ['oasl_settings_use_avatars'] = '1';
+$oasl_settings ['oasl_settings_upload_avatars'] = '1';
 $oasl_settings ['oasl_settings_ask_for_email'] = '1';
 $oasl_settings ['oasl_settings_reg_method'] = 'auto';
 $oasl_settings ['oasl_settings_allow_login_new'] = '1';
-
 
 // Available and enabled providers.
 $oasl_settings ['oasl_providers'] = 'amazon,blogger,disqus,facebook,foursquare,github,google,instagram,linkedin,livejournal,mailru,odnoklassniki,openid,paypal,reddit,skyrock,stackexchange,steam,twitch,twitter,vimeo,vkontakte,windowslive,wordpress,yahoo,youtube';

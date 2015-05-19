@@ -27,8 +27,8 @@ if (!defined('SMF'))
 	die('You are not allowed to access this file directly');
 }
 
-//OneAll Social Login Version
-define('OASL_VERSION', '3.3');
+// OneAll Social Login Version
+define('OASL_VERSION', '3.4');
 
 
 /**
@@ -298,6 +298,223 @@ function oneall_social_login_get_activation_flag ()
 
 
 /**
+ * Upload a new avatar
+ */
+function oneall_social_upload_user_avatar ($id_member, $data)
+{
+	// Global vars.
+	global $modSettings, $sourcedir, $smcFunc, $profile_vars, $cur_profile, $context;
+
+	// Manage Attachments.
+	require_once($sourcedir . '/ManageAttachments.php');
+
+	// Check data format.
+	if (is_array ($data) && (! empty ($data ['user_thumbnail']) || ! empty ($data ['user_picture'])))
+	{
+		// Use this avatar.
+		$social_network_avatar = (! empty ($data ['user_picture']) ? $data ['user_picture'] : $data ['user_thumbnail']);
+
+		// Which connection handler do we have to use?
+		$oasl_api_handler = (!empty ($modSettings ['oasl_api_handler']) && $modSettings ['oasl_api_handler'] == 'fsockopen') ? 'fsockopen' : 'curl';
+
+		// Retrieve file data.
+		$result = oneall_social_login_do_api_request ($oasl_api_handler, $social_network_avatar);
+
+		// Success?
+		if (is_object ($result) && property_exists ($result, 'http_code') && $result->http_code == 200 && property_exists ($result, 'http_data'))
+		{
+			// File data.
+			$file_data = $result->http_data;
+
+			// We need to know where we're going to be putting it (cf. Sources/Profile-Modify.php)
+			if (!empty($modSettings['custom_avatar_enabled']))
+			{
+				$upload_dir = $modSettings['custom_avatar_dir'];
+				$id_folder = 1;
+			}
+			elseif (!empty($modSettings['currentAttachmentUploadDir']))
+			{
+				if (!is_array($modSettings['attachmentUploadDir']))
+				{
+					$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
+				}
+
+				// Just use the current path for temp files.
+				$upload_dir = $modSettings['attachmentUploadDir'][$modSettings['currentAttachmentUploadDir']];
+				$id_folder = $modSettings['currentAttachmentUploadDir'];
+			}
+			else
+			{
+				$upload_dir = $modSettings['attachmentUploadDir'];
+				$id_folder = 1;
+			}
+
+			// The directory must be writeable.
+			if (is_dir ($upload_dir) && is_writable ($upload_dir))
+			{
+				// Generate a temporary filename.
+				$file_tmp =  $upload_dir . '/' . getAttachmentFilename('avatar_tmp_' . $id_member, false, null, true);
+
+				// Save file.
+				if (($fp = @fopen ($file_tmp, 'wb')) !== false)
+				{
+					// Write file data.
+					$file_new_size = fwrite ($fp, $file_data);
+					fclose ($fp);
+
+					// Attempt to chmod it.
+					@chmod ($file_tmp, 0644);
+
+					// Allowed file extensions.
+					$file_exts = array ();
+					$file_exts [IMAGETYPE_GIF] = 'gif';
+					$file_exts [IMAGETYPE_JPEG] = 'jpg';
+					$file_exts [IMAGETYPE_PNG] = 'png';
+
+					// Get image data.
+					list ($width, $height, $type, $attr) = @getimagesize ($file_tmp);
+
+					// Check image type
+					if ( ! empty ($width) && ! empty ($height) && isset ($file_exts [$type]))
+					{
+						// Read file extension
+						$file_new_ext = $file_exts [$type];
+
+						// Check if we can resize the image if needed
+						if (function_exists ('imagecreatetruecolor') && function_exists ('imagecopyresampled'))
+						{
+							$max_width = (! empty($modSettings['avatar_max_width_upload']) ? $modSettings['avatar_max_width_upload'] : $width);
+							$max_height = (! empty($modSettings['avatar_max_height_upload']) ? $modSettings['avatar_max_height_upload'] : $height);
+
+							// Check if we need to resize
+							if ($width > $max_width || $height > $max_height)
+							{
+								// Keep original size
+								$orig_height = $height;
+								$orig_width = $width;
+
+								// Taller
+								if ($height > $max_height)
+								{
+									$width = ($max_height / $height) * $width;
+									$height = $max_height;
+								}
+
+								// Wider
+								if ($width > $max_width)
+								{
+									$height = ($max_width / $width) * $height;
+									$width = $max_width;
+								}
+
+								// Destination
+								$image_resized = imagecreatetruecolor ($width, $height);
+
+								// Resize
+								switch ($file_new_ext)
+								{
+									case 'gif':
+										$image_source = imagecreatefromgif ($file_tmp);
+										imagecopyresampled ($image_resized, $image_source, 0, 0, 0, 0, $width, $height, $orig_width, $orig_height);
+										imagegif ($image_resized, $file_tmp);
+									break;
+
+									case 'png':
+										$image_source = imagecreatefrompng ($file_tmp);
+										imagecopyresampled ($image_resized, $image_source, 0, 0, 0, 0, $width, $height, $orig_width, $orig_height);
+										imagepng ($image_resized, $file_tmp);
+									break;
+
+									case 'jpg':
+										$image_source = imagecreatefromjpeg ($file_tmp);
+										imagecopyresampled ($image_resized, $image_source, 0, 0, 0, 0, $width, $height, $orig_width, $orig_height);
+										imagejpeg ($image_resized, $file_tmp);
+									break;
+								}
+
+								// File size of the resized image
+								$file_new_size = filesize ($file_tmp);
+							}
+						}
+
+						// Setup new image
+						$file_new_name = 'avatar_' . $id_member . '_' . time() . '.' . $file_new_ext;
+						$file_new_hash = (empty($modSettings['custom_avatar_enabled']) ? getAttachmentFilename($file_new_name, false, null, true) : '');
+						$file_new_mime = 'image/' . ($file_new_ext === 'jpg' ? 'jpeg' : ($file_new_ext === 'bmp' ? 'x-ms-bmp' : $file_new_ext));
+
+						// Remove previous attachments this member might have had.
+						removeAttachments(array('id_member' => $id_member));
+
+						// Insert attachment
+						$smcFunc['db_insert']('',
+								'{db_prefix}attachments',
+								array(
+									'id_member' => 'int',
+									'attachment_type' => 'int',
+									'filename' => 'string',
+									'file_hash' => 'string',
+									'fileext' => 'string',
+									'size' => 'int',
+									'width' => 'int',
+									'height' => 'int',
+									'mime_type' => 'string',
+									'id_folder' => 'int',
+								),
+								array(
+									$id_member,
+									(empty($modSettings['custom_avatar_enabled']) ? 0 : 1),
+									$file_new_name,
+									$file_new_hash,
+									$file_new_ext,
+									$file_new_size,
+									(int) $width,
+									(int) $height,
+									$file_new_mime,
+									$id_folder,
+								),
+								array('id_attach')
+						);
+
+						// Update profile
+						$cur_profile['avatar'] = '';
+						$cur_profile['id_attach'] = $smcFunc['db_insert_id']('{db_prefix}attachments', 'id_attach');
+						$cur_profile['filename'] = $file_new_name;
+						$cur_profile['attachment_type'] = (empty($modSettings['custom_avatar_enabled']) ? 0 : 1);
+
+						// Final file/ location.
+						$file_new = $upload_dir . '/' . (empty($file_new_hash) ? $file_new_name : $cur_profile['id_attach'] . '_' . $file_new_hash);
+
+						// Renamde file.
+						if (@rename ($file_tmp, $file_new))
+						{
+							 // Attempt to chmod it.
+               @chmod($file_new, 0644);
+
+               // Success!
+               return $file_new;
+						}
+						else
+						{
+							removeAttachments(array('id_member' => $id_member));
+						}
+					}
+
+					// Error.
+					@unlink ($file_tmp);
+				}
+			}
+			else
+			{
+				fatal_lang_error('attachments_no_write', 'critical');
+			}
+		}
+	}
+
+	// Error
+	return false;
+}
+
+/**
  * Creates a new user based on the given data.
  */
 function oneall_social_login_create_user (Array $data)
@@ -393,7 +610,6 @@ function oneall_social_login_create_user (Array $data)
 		}
 
 
-
 		// Encode.
 		if (!$context['utf8'])
 		{
@@ -412,14 +628,29 @@ function oneall_social_login_create_user (Array $data)
 		// Create a new user account.
 		$id_member = registerMember ($regOptions);
 
+		// User created.
 		if (is_numeric ($id_member))
 		{
+			// Upload avatar?
+			if ( ! empty ($modSettings ['oasl_settings_upload_avatars']))
+			{
+				// Upload Avatar
+				$uploaded_file = oneall_social_upload_user_avatar ($id_member, $data);
+
+				// Avatar uploaded
+				if ($uploaded_file !== false)
+				{
+					// Remove avatar url
+					$smcFunc['db_query']('', "UPDATE {db_prefix}members  SET avatar = {string:blank}  WHERE id_member = {int:id_member}", array('blank' => '', 'id_member' => $id_member));
+				}
+			}
+
 			// Tie the tokens to the newly created member.
 			oneall_social_login_link_tokens_to_id_member ($id_member, $data['user_token'], $data['identity_token']);
-		}
 
-		//Done
-		return $id_member;
+			// Done.
+			return $id_member;
+		}
 	}
 
 	//Error
@@ -689,7 +920,7 @@ function oneall_social_login_check_curl ($secure = true)
 /**
  * Sends a CURL request to the OneAll API.
  */
-function oneall_social_login_curl_request ($url, $options = array(), $timeout = 15)
+function oneall_social_login_curl_request ($url, $options = array(), $timeout = 30,  $num_redirects = 0)
 {
 	//Store the result
 	$result = new stdClass();
@@ -697,13 +928,17 @@ function oneall_social_login_curl_request ($url, $options = array(), $timeout = 
 	//Send request
 	$curl = curl_init();
 	curl_setopt($curl, CURLOPT_URL, $url);
-	curl_setopt($curl, CURLOPT_HEADER, 0);
+	curl_setopt($curl, CURLOPT_HEADER, 1);
 	curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
+	curl_setopt($curl, CURLOPT_REFERER, $url);
 	curl_setopt($curl, CURLOPT_VERBOSE, 0);
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
 	curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
 	curl_setopt($curl, CURLOPT_USERAGENT, 'SocialLogin ' . OASL_VERSION . ' SMF (+http://www.oneall.com/)');
+
+	// Does not work in PHP Safe Mode, we manually follow the locations if necessary.
+	curl_setopt ($curl, CURLOPT_FOLLOWLOCATION, 0);
 
 	// BASIC AUTH?
 	if (isset($options['api_key']) && isset($options['api_secret']))
@@ -711,18 +946,56 @@ function oneall_social_login_curl_request ($url, $options = array(), $timeout = 
 		curl_setopt($curl, CURLOPT_USERPWD, $options['api_key'] . ":" . $options['api_secret']);
 	}
 
-	//Make request
-	if (($http_data = curl_exec($curl)) !== false)
+	// Make request
+	if (($response = curl_exec ($curl)) !== false)
 	{
-		$result->http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		$result->http_data = $http_data;
+		// Get Information
+		$curl_info = curl_getinfo ($curl);
+
+		// Save result
+		$result->http_code = $curl_info ['http_code'];
+		$result->http_headers = preg_split ('/\r\n|\n|\r/', trim (substr ($response, 0, $curl_info ['header_size'])));
+		$result->http_data = trim (substr ($response, $curl_info ['header_size']));
 		$result->http_error = null;
+
+		// Check if we have a redirection header
+		if (in_array ($result->http_code, array (301, 302)) && $num_redirects < 4)
+		{
+			// Make sure we have http headers
+			if (is_array ($result->http_headers))
+			{
+				// Header found ?
+				$header_found = false;
+
+				// Loop through headers.
+				while (! $header_found && (list (, $header) = each ($result->http_headers)))
+				{
+					// Try to parse a redirection header.
+					if (preg_match ("/(Location:|URI:)[^(\n)]*/", $header, $matches))
+					{
+						// Sanitize redirection url.
+						$url_tmp = trim (str_replace ($matches [1], "", $matches [0]));
+						$url_parsed = parse_url ($url_tmp);
+
+						// Continue Redirection
+						if (! empty ($url_parsed))
+						{
+							// Header found!
+							$header_found = true;
+
+							// Follow redirection url.
+							$result = oneall_social_login_curl_request ($url_tmp, $options, $timeout, $num_redirects + 1);
+						}
+					}
+				}
+			}
+		}
 	}
 	else
 	{
-		$result->http_code = -1;
+		$result->http_code = - 1;
 		$result->http_data = null;
-		$result->http_error = curl_error($curl);
+		$result->http_error = curl_error ($curl);
 	}
 
 	//Done
@@ -762,7 +1035,7 @@ function oneall_social_login_check_fsockopen ($secure = true)
 /**
  * Sends an fsockopen request to the OneAll API
  */
-function oneall_social_login_fsockopen_request ($url, $options = array(), $timeout = 15)
+function oneall_social_login_fsockopen_request ($url, $options = array(), $timeout = 30,  $num_redirects = 0)
 {
 	//Store the result
 	$result = new stdClass();
@@ -813,8 +1086,10 @@ function oneall_social_login_fsockopen_request ($url, $options = array(), $timeo
 	if (isset($uri['query']))
 		$path .= '?' . $uri['query'];
 
-	//Create HTTP request
-	$defaults = array('Host' => "Host: $host", 'User-Agent' => 'User-Agent: SocialLogin ' . OASL_VERSION . ' SMF (+http://www.oneall.com/)');
+	// Create HTTP request
+	$defaults = array ();
+	$defaults ['Host'] = 'Host: ' . $host;
+	$defaults ['User-Agent'] = 'er-Agent: SocialLogin ' . OASL_VERSION . ' SMF (+http://www.oneall.com/)';
 
 	// BASIC AUTH?
 	if (isset($options['api_key']) && isset($options['api_secret']))
@@ -855,12 +1130,47 @@ function oneall_social_login_fsockopen_request ($url, $options = array(), $timeo
 		{
 			// Parse response.
 			list($response_header, $response_body) = explode("\r\n\r\n", $response, 2);
-			$result->http_data = $response_body;
 
 			// Parse header.
 			$response_header = preg_split("/\r\n|\n|\r/", $response_header);
 			list($header_protocol, $header_code, $header_status_message) = explode(' ', trim(array_shift($response_header)), 3);
+
+			// Set result
 			$result->http_code = $header_code;
+			$result->http_headers = $response_header;
+			$result->http_data = $response_body;
+
+			// Check if we have a redirection status code
+			if (in_array ($result->http_code, array (301, 302)) && $num_redirects <= 4)
+			{
+				// Make sure we have http headers
+				if (is_array ($result->http_headers))
+				{
+					// Header found?
+					$header_found = false;
+
+					// Loop through headers.
+					while (! $header_found && (list (, $header) = each ($result->http_headers)))
+					{
+						// Check for location header
+						if (preg_match ("/(Location:|URI:)[^(\n)]*/", $header, $matches))
+						{
+							// Found
+							$header_found = true;
+
+							// Clean url
+							$url_tmp = trim (str_replace ($matches [1], "", $matches [0]));
+							$url_parsed = parse_url ($url_tmp);
+
+							// Found
+							if (! empty ($url_parsed))
+							{
+								$result = oneall_social_login_fsockopen_request ($url_tmp, $options, $timeout, $num_redirects + 1);
+							}
+						}
+					}
+				}
+			}
 
 			// Return result.
 			return $result;

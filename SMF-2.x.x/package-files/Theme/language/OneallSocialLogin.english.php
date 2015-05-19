@@ -88,6 +88,10 @@ $txt['oasl_settings_social_avatar'] = 'Use the user picture from the social netw
 $txt['oasl_settings_social_avatar_desc'] = 'Only works with social networks that provide a user picture.';
 $txt['oasl_settings_social_avatar_yes'] = 'Yes, use the social network pictures as avatars.';
 
+$txt['oasl_settings_social_avatar_upload'] = 'Download the avatars from the social networks and store them in your SMF avatar folder?';
+$txt['oasl_settings_social_avatar_upload_desc'] = 'Only works if avatar uploads are enabled in your SMF Attachments and Avatars » Avatar Settings.';
+$txt['oasl_settings_social_avatar_upload_yes'] = 'Yes, download and store the social network avatars.';
+
 $txt['oasl_settings_social_link'] = 'Try to link new social network accounts to existing user accounts?';
 $txt['oasl_settings_social_link_desc'] = 'For security reasons this only works with social networks that provide a <strong>verified</strong> email address.';
 $txt['oasl_settings_social_link_yes'] = 'Yes, try to link accounts by using the email addresses.';
