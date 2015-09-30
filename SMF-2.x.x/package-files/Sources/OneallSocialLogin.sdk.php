@@ -29,6 +29,7 @@ if (!defined('SMF'))
 
 // OneAll Social Login Version
 define('OASL_VERSION', '3.4');
+define('OASL_USER_AGENT', 'SocialLogin/' . OASL_VERSION . ' SMF/2.x.x (+http://www.oneall.com/)');
 
 
 /**
@@ -935,7 +936,7 @@ function oneall_social_login_curl_request ($url, $options = array(), $timeout = 
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
 	curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-	curl_setopt($curl, CURLOPT_USERAGENT, 'SocialLogin ' . OASL_VERSION . ' SMF (+http://www.oneall.com/)');
+	curl_setopt($curl, CURLOPT_USERAGENT, OASL_USER_AGENT);
 
 	// Does not work in PHP Safe Mode, we manually follow the locations if necessary.
 	curl_setopt ($curl, CURLOPT_FOLLOWLOCATION, 0);
@@ -1089,7 +1090,7 @@ function oneall_social_login_fsockopen_request ($url, $options = array(), $timeo
 	// Create HTTP request
 	$defaults = array ();
 	$defaults ['Host'] = 'Host: ' . $host;
-	$defaults ['User-Agent'] = 'er-Agent: SocialLogin ' . OASL_VERSION . ' SMF (+http://www.oneall.com/)';
+	$defaults ['User-Agent'] = 'User-Agent: ' . OASL_USER_AGENT;
 
 	// BASIC AUTH?
 	if (isset($options['api_key']) && isset($options['api_secret']))
