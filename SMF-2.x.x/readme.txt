@@ -1,9 +1,9 @@
 [size=20pt]OneAll Social Login[/size]
 
 OneAll Social Login for SMF 2.0.x is a professional modification that allows
-your visitors to login and register with 20+ social networks like for example
-Facebook, Twitter, LinkedIn, Google+, LiveJournal, StackExchange, Hyves and 
-Yahoo amongst others.
+your visitors to login and register with 30+ social networks like for example
+Facebook, Twitter, LinkedIn, Google+, LiveJournal, StackExchange and Yahoo 
+amongst others.
 
 
 [b]Social Login increases your registration rate[/b]
@@ -17,10 +17,13 @@ OneAll Social Login integrates with your existing registration system so you
 and your users don't have to start from scratch.
 
 
-[b]25+ Supported Social Networks[/b]
+[b]30+ Supported Social Networks[/b]
 - Amazon
+- Battle.net
 - Blogger
 - Disqus
+- Draugiem
+- Dribbble
 - Facebook
 - Foursquare
 - Github.com
@@ -32,6 +35,8 @@ and your users don't have to start from scratch.
 - Odnoklassniki
 - OpenID
 - PayPal
+- Pinterest
+- Pixelpin
 - Reddit
 - Skyrock.com
 - StackExchange
@@ -66,4 +71,5 @@ questions about the Social Login Module, to give us your feedback or if you
 need any help with the integration of the modification.
 
 Our team answers your questions at:
+http://support.oneall.com/
 http://www.oneall.com/company/contact-us/
