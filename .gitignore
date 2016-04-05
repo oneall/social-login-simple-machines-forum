@@ -1,0 +1,5 @@
+*.tgz
+*.tar.gz
+.buildpath
+.project
+.settings

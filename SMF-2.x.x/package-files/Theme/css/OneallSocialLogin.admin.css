@@ -104,6 +104,10 @@
   background-position: -409px -1px;
 }
 
+.oasl_provider.oasl_provider_draugiem {
+  background-position: -446px -1px;
+}
+
 .oasl_provider.oasl_provider_twitter {
   background-position: -520px -1px;
 }
@@ -156,18 +160,29 @@
   background-position: -1038px -1px;
 }
 
-.oasl_provider.oasl_provider_deviantart {
-  background-position: -1075px -1px;
-}
-
 .oasl_provider.oasl_provider_twitch {
   background-position: -1112px -1px;
 }
-
 .oasl_provider.oasl_provider_amazon {
   background-position: -1149px -1px;
 }
 
 .oasl_provider.oasl_provider_instagram {
   background-position: -1186px -1px;
+}
+
+.oasl_provider.oasl_provider_battlenet {
+    background-position: -1223px -1px;
+}
+
+.oasl_provider.oasl_provider_dribbble {
+	background-position: -1260px -1px;
+}
+
+.oasl_provider.oasl_provider_pinterest {
+	background-position: -1297px -1px;
+}
+
+.oasl_provider.oasl_provider_pixelpin {
+	background-position: -1334px -1px;
 }
