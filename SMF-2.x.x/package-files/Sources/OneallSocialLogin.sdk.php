@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   	OneAll Social Login
- * @copyright 	Copyright 2011-2015 http://www.oneall.com - All rights reserved.
+ * @copyright 	Copyright 2011-Present http://www.oneall.com - All rights reserved.
  * @license   	GNU/GPL 2 or later
  *
  * This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ if (!defined('SMF'))
 }
 
 // OneAll Social Login Version
-define('OASL_VERSION', '3.5');
+define('OASL_VERSION', '3.6');
 define('OASL_USER_AGENT', 'SocialLogin/' . OASL_VERSION . ' SMF/2.x.x (+http://www.oneall.com/)');
 
 

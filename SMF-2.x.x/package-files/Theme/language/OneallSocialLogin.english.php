@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   	OneAll Social Login
- * @copyright 	Copyright 2011-2015 http://www.oneall.com - All rights reserved.
+ * @copyright 	Copyright 2011-Present http://www.oneall.com - All rights reserved.
  * @license   	GNU/GPL 2 or later
  *
  * This program is free software; you can redistribute it and/or
@@ -113,5 +113,3 @@ $txt['oasl_register_email_exists'] = 'The specified email address is already use
 $txt['oasl_register_email_invalid'] = 'The specified email address is invalid';
 
 $txt['oasl_save_settings'] = 'Save Settings';
-
-?>
