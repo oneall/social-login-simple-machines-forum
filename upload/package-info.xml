@@ -5,7 +5,7 @@
 	<id>OneAll:OneAllSocialLogin</id>
 	<name>OneAll Social Login</name>
 	<type>modification</type>
-	<version>1.0</version>
+	<version>1.0.0</version>
 	
 	<install for="1.1 - 1.1.99">
 		<redirect url="?action=oasl;sa=settings">OneallSocialLogin.redirect.txt</redirect>		
