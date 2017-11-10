@@ -15,7 +15,6 @@ http://docs.oneall.com/plugins/guide/social-login-smf/
 ## Official SMF Mod
 http://custom.simplemachines.org/mods/index.php?mod=3580
 
-
 ## Supported Social Networks
 * Amazon
 * Blogger
