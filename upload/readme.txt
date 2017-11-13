@@ -16,29 +16,45 @@ OneAll Social Login integrates with your existing registration system so you
 and your users don't have to start from scratch.
 
 
-[b]20+ Supported Social Networks[/b]
+[b]35+ Supported Social Networks[/b]
+- Amazon
+- Battle.net
+- Blogger
+- Discord
+- Disqus
+- Draugiem
+- Dribbble
 - Facebook
-- Twitter
-- Google
-- LinkedIn
 - Foursquare
-- Yahoo
-- OpenID
 - Github.com
-- Paypal
+- Google
+- Instagram
+- Line
+- LinkedIn
 - LiveJournal
-- Skyrock.com
-- WordPress.com
-- Hyves
-- VKontakte
 - Mail.ru
-- Steam Community
+- Meetup
 - Odnoklassniki
+- OpenID
+- PayPal
+- Pinterest
+- PixelPin
+- Reddit
+- Skyrock.com
+- SoundCloud
 - StackExchange
 - Steam
-- YouTube
+- Tumblr
+- Twitch.tv
+- Twitter
+- Vimeo
+- VKontakte
+- Weibo
 - Windows Live
-
+- WordPress.com
+- Xing
+- Yahoo
+- YouTube
 
 [b]About Us[/b]
 Social Login is maintained by OneAll, a technology company offering a set of

@@ -1,8 +1,8 @@
 <?php
 /**
- * @package   	OneAll Social Login
- * @copyright 	Copyright 2012 http://www.oneall.com - All rights reserved.
- * @license   	GNU/GPL 2 or later
+ * @package       OneAll Social Login
+ * @copyright     Copyright 2012 http://www.oneall.com - All rights reserved.
+ * @license       GNU/GPL 2 or later
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,13 +24,13 @@
  */
 
 // Security Check.
-if (file_exists (dirname (__FILE__) . '/SSI.php') && !defined ('SMF'))
+if (file_exists(dirname(__FILE__) . '/SSI.php') && !defined('SMF'))
 {
-	require_once(dirname (__FILE__) . '/SSI.php');
+    require_once dirname(__FILE__) . '/SSI.php';
 }
-elseif (!defined ('SMF'))
+elseif (!defined('SMF'))
 {
-	die ('<strong>Unable to install:</strong> Please make sure that you have copied this file in the same location as the index.php of your SMF.');
+    die('<strong>Unable to install:</strong> Please make sure that you have copied this file in the same location as the index.php of your SMF.');
 }
 
 // Identities table.
@@ -55,11 +55,10 @@ db_query("INSERT IGNORE INTO {$db_prefix}settings VALUES ('oasl_settings_link_ac
 db_query("INSERT IGNORE INTO {$db_prefix}settings VALUES ('oasl_settings_use_avatars', '1')", __FILE__, __LINE__);
 
 // Availabled and enabled providers.
-db_query("REPLACE INTO {$db_prefix}settings VALUES ('oasl_providers', 'facebook,twitter,google,linkedin,yahoo,github,foursquare,youtube,skyrock,openid,wordpress,hyves,paypal,livejournal,steam,windowslive,blogger,disqus,stackexchange,vkontakte,odnoklassniki,mailru')", __FILE__, __LINE__);
+db_query("REPLACE INTO {$db_prefix}settings VALUES ('oasl_providers', 'amazon, battlenet, blogger, discord, disqus, draugiem, dribbble, facebook, foursquare, github, google, instagram, line, linkedin, livejournal, mailru, meetup, odnoklassniki, openid, paypal, pinterest, pixelpin, reddit, skyrock, soundcloud, stackexchange, steam, tumblr, twitch, twitter, vimeo, vkontakte, weibo, windowslive, wordpress, xing, yahoo, youtube')", __FILE__, __LINE__);
 db_query("INSERT IGNORE INTO {$db_prefix}settings VALUES ('oasl_enabled_providers', 'facebook,twitter,google,linkedin')", __FILE__, __LINE__);
 
 if (!empty($ssi))
 {
-	echo 'Database installation complete!';
+    echo 'Database installation complete!';
 }
-?>
