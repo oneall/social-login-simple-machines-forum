@@ -1,5 +1,0 @@
-<h2>Installed successfully!</h2>
-<p>
-	OneAll Social Login has been installed successfully! <br />
-	Please wait while your are being redirected or click <a href="/index.php?action=oasl;sa=settings">here</a>.
-</p>
