@@ -64,6 +64,30 @@
   background-position: -2px -1px;
 }
 
+.oasl_provider.oasl_provider_discord {
+    background-position: -1519px -1px;
+}
+
+.oasl_provider.oasl_provider_line {
+    background-position: -1445px -1px;
+}
+
+.oasl_provider.oasl_provider_soundcloud {
+    background-position: -1482px -1px;
+}
+
+.oasl_provider.oasl_provider_tumblr {
+    background-position: -1593px -1px;
+}
+
+.oasl_provider.oasl_provider_weibo {
+    background-position: -1556px -1px;
+}
+
+.oasl_provider.oasl_provider_meetup {
+    background-position: -1408px -1px;
+}
+
 .oasl_provider.oasl_provider_blogger {
   background-position: -39px -1px;
 }

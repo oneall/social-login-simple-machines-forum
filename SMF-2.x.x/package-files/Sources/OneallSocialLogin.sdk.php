@@ -28,7 +28,7 @@ if (!defined('SMF'))
 }
 
 // OneAll Social Login Version
-define('OASL_VERSION', '3.6');
+define('OASL_VERSION', '3.7');
 define('OASL_USER_AGENT', 'SocialLogin/' . OASL_VERSION . ' SMF/2.x.x (+http://www.oneall.com/)');
 
 
@@ -131,16 +131,26 @@ function oneall_social_login_extract_social_network_profile ($social_data)
 				$data['user_login'] = $data['user_full_name'];
 			}
 
-			// Email Address.
+
+			// Email container.
 			$data['user_email'] = '';
+			$data['user_email_is_verified'] = null;
+
+			// Do we have any emails in the profile data?
 			if (property_exists ($identity, 'emails') && is_array ($identity->emails))
 			{
-				$data['user_email_is_verified'] = false;
-				while ($data['user_email_is_verified'] !== true && (list(, $obj) = each ($identity->emails)))
-				{
-					$data['user_email'] = $obj->value;
-					$data['user_email_is_verified'] = !empty ($obj->is_verified);
-				}
+			    // Extract email address.
+			    foreach ($identity->emails AS $email)
+			    {
+			        $data['user_email'] = $email->value;
+			        $data['user_email_is_verified'] = (!empty($email->is_verified) ? true : false);
+
+			        // Stop once we have found a verified email address.
+			        if ($data['user_email_is_verified'])
+			        {
+			            break;
+			        }
+			    }
 			}
 
 			// Website/Homepage.
@@ -959,33 +969,29 @@ function oneall_social_login_curl_request ($url, $options = array(), $timeout = 
 		$result->http_data = trim (substr ($response, $curl_info ['header_size']));
 		$result->http_error = null;
 
-		// Check if we have a redirection header
+		// Check if we have a redirection status code.
 		if (in_array ($result->http_code, array (301, 302)) && $num_redirects < 4)
 		{
 			// Make sure we have http headers
 			if (is_array ($result->http_headers))
 			{
-				// Header found ?
-				$header_found = false;
-
 				// Loop through headers.
-				while (! $header_found && (list (, $header) = each ($result->http_headers)))
+				foreach ($result->http_headers AS $header)
 				{
 					// Try to parse a redirection header.
 					if (preg_match ("/(Location:|URI:)[^(\n)]*/", $header, $matches))
 					{
 						// Sanitize redirection url.
-						$url_tmp = trim (str_replace ($matches [1], "", $matches [0]));
-						$url_parsed = parse_url ($url_tmp);
+						$location = trim (str_replace ($matches [1], "", $matches [0]));
 
 						// Continue Redirection
-						if (! empty ($url_parsed))
+						if (filter_var($location, FILTER_VALIDATE_URL))
 						{
-							// Header found!
-							$header_found = true;
-
 							// Follow redirection url.
-							$result = oneall_social_login_curl_request ($url_tmp, $options, $timeout, $num_redirects + 1);
+							$result = oneall_social_login_curl_request ($location, $options, $timeout, $num_redirects + 1);
+
+							// Stop reading headers.
+							break;
 						}
 					}
 				}
@@ -1141,32 +1147,29 @@ function oneall_social_login_fsockopen_request ($url, $options = array(), $timeo
 			$result->http_headers = $response_header;
 			$result->http_data = $response_body;
 
-			// Check if we have a redirection status code
+			// Check if we have a redirection status code.
 			if (in_array ($result->http_code, array (301, 302)) && $num_redirects <= 4)
 			{
-				// Make sure we have http headers
+				// Make sure we have http headers.
 				if (is_array ($result->http_headers))
 				{
-					// Header found?
-					$header_found = false;
-
 					// Loop through headers.
-					while (! $header_found && (list (, $header) = each ($result->http_headers)))
+					foreach ($result->http_headers AS $header)
 					{
-						// Check for location header
+						// Try to parse a redirection header.
 						if (preg_match ("/(Location:|URI:)[^(\n)]*/", $header, $matches))
 						{
-							// Found
-							$header_found = true;
+							// Sanitize redirection url.
+							$location = trim (str_replace ($matches [1], "", $matches [0]));
 
-							// Clean url
-							$url_tmp = trim (str_replace ($matches [1], "", $matches [0]));
-							$url_parsed = parse_url ($url_tmp);
-
-							// Found
-							if (! empty ($url_parsed))
+							// Continue redirection.
+							if (filter_var($location, FILTER_VALIDATE_URL))
 							{
-								$result = oneall_social_login_fsockopen_request ($url_tmp, $options, $timeout, $num_redirects + 1);
+							    // Follow redirection url.
+								$result = oneall_social_login_fsockopen_request ($location, $options, $timeout, $num_redirects + 1);
+
+								// Stop reading headers.
+								break;
 							}
 						}
 					}

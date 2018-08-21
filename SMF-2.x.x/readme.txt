@@ -17,10 +17,11 @@ OneAll Social Login integrates with your existing registration system so you
 and your users don't have to start from scratch.
 
 
-[b]30+ Supported Social Networks[/b]
+[b]35+ Supported Social Networks[/b]
 - Amazon
 - Battle.net
 - Blogger
+- Discord
 - Disqus
 - Draugiem
 - Dribbble
@@ -29,9 +30,11 @@ and your users don't have to start from scratch.
 - Github.com
 - Google
 - Instagram
+- Line
 - LinkedIn
 - LiveJournal
 - Mail.ru
+- Meetup
 - Odnoklassniki
 - OpenID
 - PayPal
@@ -39,12 +42,14 @@ and your users don't have to start from scratch.
 - Pixelpin
 - Reddit
 - Skyrock.com
+- Soundcloud
 - StackExchange
 - Steam
 - Twitch.tv
 - Twitter
 - Vimeo
 - VKontakte
+- Weibo
 - Windows Live
 - WordPress.com
 - Yahoo
