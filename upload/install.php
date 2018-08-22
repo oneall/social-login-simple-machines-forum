@@ -55,24 +55,20 @@ $smcFunc['db_create_table']('{db_prefix}oasl_users', array(
         'type' => 'char',
         'size' => '40'
     )
-),
+), array(
     array(
-        array(
-            'type' => 'primary',
-            'columns' => array(
-                'id_oasl_user'
-            )
-        ),
-        array(
-            'type' => 'unique',
-            'columns' => array(
-                'user_token'
-            )
+        'type' => 'primary',
+        'columns' => array(
+            'id_oasl_user'
         )
     ),
-    array(),
-    'ignore'
-);
+    array(
+        'type' => 'unique',
+        'columns' => array(
+            'user_token'
+        )
+    )
+), array(), 'ignore');
 
 // Create identity_tokens table.
 $smcFunc['db_create_table']('{db_prefix}oasl_identities', array(
@@ -93,24 +89,20 @@ $smcFunc['db_create_table']('{db_prefix}oasl_identities', array(
         'type' => 'char',
         'size' => '40'
     )
-),
+), array(
     array(
-        array(
-            'type' => 'primary',
-            'columns' => array(
-                'id_oasl_identity'
-            )
-        ),
-        array(
-            'type' => 'unique',
-            'columns' => array(
-                'identity_token'
-            )
+        'type' => 'primary',
+        'columns' => array(
+            'id_oasl_identity'
         )
     ),
-    array(),
-    'ignore'
-);
+    array(
+        'type' => 'unique',
+        'columns' => array(
+            'identity_token'
+        )
+    )
+), array(), 'ignore');
 
 // Setup settings.
 $oasl_settings = array();
@@ -138,7 +130,7 @@ $oasl_settings['oasl_settings_reg_method'] = 'auto';
 $oasl_settings['oasl_settings_allow_login_new'] = '1';
 
 // Available and enabled providers.
-$oasl_settings['oasl_providers'] = 'amazon,battlenet,blogger,discord,disqus,draugiem,dribbble,facebook,foursquare,github,google,instagram,line,linkedin,livejournal,mailru,meetup,odnoklassniki,openid,paypal,pinterest,pixelpin,reddit,skyrock,soundcloud,stackexchange,steam,tumblr,twitch,twitter,vimeo,vkontakte,weibo,windowslive,wordpress,xing,yahoo,youtube';
+$oasl_settings['oasl_providers'] = 'amazon,battlenet,blogger,discord,disqus,draugiem,dribbble,facebook,foursquare,github,google,instagram,line,linkedin,livejournal,mailru,meetup,odnoklassniki,openid,paypal,pinterest,pixelpin,reddit,skyrock,soundcloud,stackexchange,steam,tumblr,twitch,twitter,vimeo,vkontakte,weibo,windowslive,wordpress,yahoo,youtube';
 $oasl_settings['oasl_enabled_providers'] = 'facebook,twitter,google,linkedin';
 
 // Update settings.
