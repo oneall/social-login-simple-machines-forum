@@ -18,7 +18,7 @@
 		<require-file name="/package-files/Theme/OneallSocialLogin.admin.template.php" destination="$themedir" />
 		<require-file name="/package-files/Theme/css/OneallSocialLogin.admin.css" destination="$themedir/css" />
 		<require-file name="/package-files/Theme/OneallSocialLogin.registration.template.php" destination="$themedir" />
-		<require-file name="/package-files/Theme/images/OneallSocialLogin.sprite_35_35.png" destination="$themedir/images" />
+		<require-file name="/package-files/Theme/images/OneallSocialLogin.providers.png" destination="$themedir/images" />
 		<require-file name="/package-files/Theme/language/OneallSocialLogin.english.php" destination="$languagedir" />	
 	</install>	    	
 	<uninstall>		
@@ -31,7 +31,7 @@
 		<remove-file name="$themedir/OneallSocialLogin.admin.template.php" />
 		<remove-file name="$themedir/css/OneallSocialLogin.admin.css"  />
 		<remove-file name="$themedir/OneallSocialLogin.registration.template.php" />
-		<remove-file name="$themedir/images/OneallSocialLogin.sprite_35_35.png" />
+		<remove-file name="$themedir/images/OneallSocialLogin.providers.png" />
 		<remove-file name="$languagedir/OneallSocialLogin.english.php" />		
 	</uninstall>	
 </package-info>
