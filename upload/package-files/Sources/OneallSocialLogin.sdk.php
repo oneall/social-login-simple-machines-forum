@@ -28,7 +28,7 @@ if (!defined('SMF'))
 }
 
 // OneAll Social Login Version
-define('OASL_VERSION', '3.7.0');
+define('OASL_VERSION', '3.7');
 define('OASL_USER_AGENT', 'SocialLogin/' . OASL_VERSION . ' SMF/2.x.x (+http://www.oneall.com/)');
 
 
@@ -37,7 +37,7 @@ define('OASL_USER_AGENT', 'SocialLogin/' . OASL_VERSION . ' SMF/2.x.x (+http://w
  */
 function oneall_social_login_clear_session()
 {
-    foreach (array('session_open', 'session_time', 'social_data', 'origin') as $key)
+	foreach (array('session_open', 'session_time', 'social_data', 'origin') AS $key)
 	{
 		$key = 'oasl_' . $key;
 
@@ -196,7 +196,7 @@ function oneall_social_login_login_user ($id_member, &$error_flag)
 	global $txt, $boarddir, $sourcedir, $user_settings, $context, $modSettings, $smcFunc;
 
 	// Check identifier.
-    if (is_numeric($id_member) and $id_member > 0)
+	if (is_numeric ($id_member) AND $id_member > 0)
 	{
 		// Read user data.
 		$request = $smcFunc ['db_query'] ('', '
@@ -217,7 +217,7 @@ function oneall_social_login_login_user ($id_member, &$error_flag)
 			$modSettings['cookieTime'] = 3153600;
 
 			// Login.
-            require_once $sourcedir . '/LogInOut.php';
+			require_once($sourcedir . '/LogInOut.php');
 
 			// Check their activation status.
 			if (!checkActivation())
@@ -317,7 +317,7 @@ function oneall_social_upload_user_avatar ($id_member, $data)
 	global $modSettings, $sourcedir, $smcFunc, $profile_vars, $cur_profile, $context;
 
 	// Manage Attachments.
-    require_once $sourcedir . '/ManageAttachments.php';
+	require_once($sourcedir . '/ManageAttachments.php');
 
 	// Check data format.
 	if (is_array ($data) && (! empty ($data ['user_thumbnail']) || ! empty ($data ['user_picture'])))
@@ -469,7 +469,7 @@ function oneall_social_upload_user_avatar ($id_member, $data)
 									'width' => 'int',
 									'height' => 'int',
 									'mime_type' => 'string',
-                                	'id_folder' => 'int'
+									'id_folder' => 'int',
 								),
 								array(
 									$id_member,
@@ -481,7 +481,7 @@ function oneall_social_upload_user_avatar ($id_member, $data)
 									(int) $width,
 									(int) $height,
 									$file_new_mime,
-                               		$id_folder
+									$id_folder,
 								),
 								array('id_attach')
 						);
@@ -528,7 +528,7 @@ function oneall_social_upload_user_avatar ($id_member, $data)
 /**
  * Creates a new user based on the given data.
  */
-function oneall_social_login_create_user(array $data)
+function oneall_social_login_create_user (Array $data)
 {
 	if (is_array ($data) && ! empty ($data['user_token']) && ! empty ($data['identity_token']))
 	{
@@ -536,7 +536,7 @@ function oneall_social_login_create_user(array $data)
 		global $boarddir, $sourcedir, $user_settings, $user_info, $context, $modSettings, $smcFunc;
 
 		// Registration functions.
-        require_once $sourcedir . '/Subs-Members.php';
+		require_once($sourcedir . '/Subs-Members.php');
 
 		// Build User fields.
 		$regOptions = array ();
@@ -615,7 +615,8 @@ function oneall_social_login_create_user(array $data)
 			do
 			{
 				$tmp = $regOptions ['username'] . ($i++);
-            } while (isReservedName($tmp));
+			}
+			while (isReservedName ($tmp));
 			$regOptions ['username'] = $tmp;
 		}
 
@@ -862,8 +863,8 @@ function oneall_social_login_create_rand_email_address ()
 	do
 	{
 		$email_address = md5(uniqid(mt_rand(10000, 99000))) . "@example.com";
-    } while (oneall_social_login_get_id_member_for_email_address($email_address) !== false);
-
+	}
+	while (oneall_social_login_get_id_member_for_email_address($email_address) !== false);
 	return $email_address;
 }
 
@@ -1090,9 +1091,7 @@ function oneall_social_login_fsockopen_request ($url, $options = array(), $timeo
 	//Construct the path to act on
 	$path = (isset($uri['path']) ? $uri['path'] : '/');
 	if (isset($uri['query']))
-    {
 		$path .= '?' . $uri['query'];
-    }
 
 	// Create HTTP request
 	$defaults = array ();
