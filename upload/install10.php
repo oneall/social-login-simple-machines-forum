@@ -55,7 +55,7 @@ db_query("INSERT IGNORE INTO {$db_prefix}settings VALUES ('oasl_settings_link_ac
 db_query("INSERT IGNORE INTO {$db_prefix}settings VALUES ('oasl_settings_use_avatars', '1')", __FILE__, __LINE__);
 
 // Availabled and enabled providers.
-db_query("REPLACE INTO {$db_prefix}settings VALUES ('oasl_providers', 'amazon, battlenet, blogger, discord, disqus, draugiem, dribbble, facebook, foursquare, github, google, instagram, line, linkedin, livejournal, mailru, meetup, odnoklassniki, openid, paypal, pinterest, pixelpin, reddit, skyrock, soundcloud, stackexchange, steam, tumblr, twitch, twitter, vimeo, vkontakte, weibo, windowslive, wordpress, xing, yahoo, youtube')", __FILE__, __LINE__);
+db_query("REPLACE INTO {$db_prefix}settings VALUES ('oasl_providers', 'amazon, battlenet, blogger, discord, disqus, draugiem, dribbble, facebook, foursquare, github, google, instagram, line, linkedin, livejournal, mailru, meetup, mixer, odnoklassniki, openid, paypal, pinterest, pixelpin, reddit, skyrock, soundcloud, stackexchange, steam, tumblr, twitch, twitter, vimeo, vkontakte, weibo, windowslive, wordpress, xing, yahoo, youtube')", __FILE__, __LINE__);
 db_query("INSERT IGNORE INTO {$db_prefix}settings VALUES ('oasl_enabled_providers', 'facebook,twitter,google,linkedin')", __FILE__, __LINE__);
 
 if (!empty($ssi))

@@ -34,6 +34,7 @@ and your users don't have to start from scratch.
 - LiveJournal
 - Mail.ru
 - Meetup
+- Mixer
 - Odnoklassniki
 - OpenID
 - PayPal
