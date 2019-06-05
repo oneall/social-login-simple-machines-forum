@@ -127,7 +127,7 @@ $oasl_settings['oasl_api_secret'] = '';
 // General settings.
 $oasl_settings['oasl_settings_login_caption'] = 'Login with your social network';
 $oasl_settings['oasl_settings_login_allow_new'] = '1';
-$oasl_settings['oasl_settings_registration_caption'] = 'Or simply register using your social network account';
+$oasl_settings['oasl_settings_registration_caption'] = 'Simply register using your social network account';
 $oasl_settings['oasl_settings_profile_caption'] = 'Social Networks';
 $oasl_settings['oasl_settings_profile_desc'] = 'Link your forum account to one or more social network accounts.';
 $oasl_settings['oasl_settings_link_accounts'] = '1';

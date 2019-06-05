@@ -2,7 +2,7 @@
 <!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
 <modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
 <id>OneAll:OneAllSocialLogin</id>
-<version>3.8.0</version>
+<version>4.0.0</version>
 
 <file name="$languagedir/Modifications.english.php">
 	<operation>
@@ -128,18 +128,8 @@ $txt['oasl_user_require_activation'] = 'Your account has been created but it nee
 
 <file name="$themedir/Register.template.php">
 	<operation>
-		<search position="after"><![CDATA[if (!empty($modSettings['enableOpenID']))
-	{
-		echo '
-
-					<dl class="register_form" id="openid_group">
-						<dt><strong>', $txt['authenticate_openid_url'], ':</strong></dt>
-						<dd>
-							<input type="text" name="openid_identifier" id="openid_url" size="30" tabindex="', $context['tabindex']++, '" value="', isset($context['openid']) ? $context['openid'] : '', '" class="input_text openid_login" />
-						</dd>
-					</dl>';
-
-	}]]></search>
+		<search position="after"><![CDATA[echo '
+		<form action="', !empty($modSettings['force_ssl']) ? strtr($scripturl, array('http://' => 'https://')) : $scripturl, '?action=signup2" method="post" accept-charset="', $context['character_set'], '" name="registration" id="registration" onsubmit="return verifyAgree();">]]></search>
 		<add><![CDATA[
 
 	// OneAll Social Login (https://docs.oneall.com/plugins/)
@@ -152,20 +142,15 @@ $txt['oasl_user_require_activation'] = 'Your account has been created but it nee
 		
 		// Compute a random integer.
 		$rand = mt_rand (99999, 9999999);
-			
-		echo '
-				</fieldset>
-				<span class="botslice"><span></span></span>
-			</div>';			
-
+	
 		// Add a caption.
 		if ( ! empty ($modSettings['oasl_settings_registration_caption']))
 		{		
 			echo '
-				<div class="title_bar">
-					<h4 class="titlebg">
-						<strong>'.$modSettings['oasl_settings_registration_caption'].'
-					</h4>
+				<div class="cat_bar">
+					<h3 class="catbg">
+						<strong>'.$modSettings['oasl_settings_registration_caption'].' </strong>
+					</h3>
 				</div>';
 		}		
 		// Or otherwise just a separation.
@@ -191,23 +176,23 @@ $txt['oasl_user_require_activation'] = 'Your account has been created but it nee
 		}
 
 		echo '	
-			<div class="windowbg2">
+			<div class="roundframe noup">
 				<span class="topslice"><span></span></span>
-				<fieldset class="content">
-					<dl class="register_form">					
-						<dd>
-							<label>
-								<div class="oneall_social_login_providers" id="oneall_social_login_providers_'.$rand.'"></div>
-								<script type="text/javascript">
-									oneall.api.plugins.social_login.build("oneall_social_login_providers_'.$rand.'", {
-										"providers": [\''.implode ("', '", $providers).'\'], 
-										"callback_uri": \''.$boardurl.'/index.php?action=oasl_callback;oasl_source=registration\'
-									  });
-								</script>
-							 	<!-- OneAll.com / Social Login for SMF -->
-							</label>		
-						</dd>
-					</dl>';
+				<dl class="register_form">					
+					<dd>
+						<label>
+							<div class="oneall_social_login_providers" id="oneall_social_login_providers_'.$rand.'"></div>
+							<script type="text/javascript">
+								oneall.api.plugins.social_login.build("oneall_social_login_providers_'.$rand.'", {
+									"providers": [\''.implode ("', '", $providers).'\'], 
+									"callback_uri": \''.$boardurl.'/index.php?action=oasl_callback;oasl_source=registration\'
+								  });
+							</script>
+						 	<!-- OneAll.com / Social Login for SMF -->
+						</label>		
+					</dd>
+				</dl>
+			</div>';
 	}	
 		
 	]]></add>
@@ -277,7 +262,9 @@ function template_oneall_social_login()
 ]]></add>
 	</operation>
 	<operation>
-		<search position="before"><![CDATA[<p class="smalltext"><a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a></p>]]></search>
+		<search position="before"><![CDATA[<a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a>
+					</p>
+					<input type="hidden" name="hash_passwrd" value="">]]></search>
 		<add><![CDATA[';
 							
 	// OneAll Social Login (https://docs.oneall.com/plugins/)
@@ -286,8 +273,9 @@ function template_oneall_social_login()
 	echo ']]></add>
 	</operation>
 	<operation>
-		<search position="before"><![CDATA[<p class="centertext"><input type="submit" value="', $txt['login'], '" class="button_submit" /></p>
-				<p class="centertext smalltext"><a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a></p>]]></search>
+		<search position="before"><![CDATA[<a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a>
+				</p>
+			</div>]]></search>
 		<add><![CDATA[';
 							
 	// OneAll Social Login (https://docs.oneall.com/plugins/)
@@ -300,7 +288,7 @@ function template_oneall_social_login()
 
 <file name="$sourcedir/Profile.php">
 	<operation>
-		<search position="after"><![CDATA[$context['require_password'] = $check_password && empty($user_settings['openid_uri']);]]></search>
+		<search position="after"><![CDATA[$context['require_password'] = $check_password;]]></search>
 		<add><![CDATA[		
 	// OneAll Social Login : The user has no password to login, so disable it.
 	$request = $smcFunc['db_query']('', 'SELECT user_token FROM {db_prefix}oasl_users WHERE id_member = {int:id_member} LIMIT 1', array ('id_member' => $memID));

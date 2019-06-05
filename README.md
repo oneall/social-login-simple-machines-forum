@@ -1,8 +1,9 @@
 ## Available Versions
 * [Social Login for Simple Machines Forum 1.0-1.9.x](https://github.com/oneall/social-login-simple-machines-forum/tree/smf/1.0-1.9.x)
-* **Social Login for Simple Machines Forum 2.0+**
+* [Social Login for Simple Machines Forum 2.0+](https://github.com/oneall/social-login-simple-machines-forum/tree/smf/2.0+)
+* **Social Login for Simple Machines Forum 2.1+**
 
-# Social Login 3.8.0 for SMF 2.0+
+# Social Login 4.0.0 for SMF 2.1+
 Social Login for Simple Machines Forum allows your users to login and register with 35+ social networks. 
 It increases your SMF user registration rate by simplifying the registration process for 
 new users and provides permission-based social data retrieved from the social network profiles.

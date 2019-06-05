@@ -161,22 +161,6 @@ function oneall_social_login_extract_social_network_profile($social_data)
                 $data['user_website'] = $identity->urls[0]->value;
             }
 
-            // Gender
-            $data['user_gender'] = 0;
-            if (!empty($identity->gender))
-            {
-                switch ($identity->gender)
-                {
-                    case 'male':
-                        $data['user_gender'] = 1;
-                        break;
-
-                    case 'female':
-                        $data['user_gender'] = 2;
-                        break;
-                }
-            }
-
             return $data;
         }
     }
@@ -197,7 +181,7 @@ function oneall_social_login_login_user($id_member, &$error_flag)
     {
         // Read user data.
         $request = $smcFunc['db_query']('', '
-			SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt, openid_uri, passwd_flood
+			SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt, passwd_flood
 			FROM {db_prefix}members
 			WHERE id_member = {int:id_member} LIMIT 1',
             array(
@@ -568,8 +552,6 @@ function oneall_social_login_create_user(array $data)
 
         // Additional user fields.
         $regOptions['extra_register_vars']['website_url'] = $data['user_website'];
-        $regOptions['extra_register_vars']['gender'] = $data['user_gender'];
-        $regOptions['extra_register_vars']['location'] = $data['user_location'];
         $regOptions['extra_register_vars']['real_name'] = (!empty($data['user_full_name']) ? $data['user_full_name'] : $data['user_login']);
 
         //About Me - Replace line breaks with a spaces
@@ -623,7 +605,6 @@ function oneall_social_login_create_user(array $data)
         // Encode.
         if (!$context['utf8'])
         {
-            $regOptions['extra_register_vars']['location'] = utf8_decode($regOptions['extra_register_vars']['location']);
             $regOptions['extra_register_vars']['real_name'] = utf8_decode($regOptions['extra_register_vars']['real_name']);
             $regOptions['extra_register_vars']['personal_text'] = utf8_decode($regOptions['extra_register_vars']['personal_text']);
             $regOptions['username'] = utf8_decode($regOptions['username']);
