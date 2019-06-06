@@ -1,8 +1,8 @@
 <?php
 /**
- * @package   	OneAll Social Login
- * @copyright 	Copyright 2011-Present http://www.oneall.com - All rights reserved.
- * @license   	GNU/GPL 2 or later
+ * @package       OneAll Social Login
+ * @copyright     Copyright 2011-Present http://www.oneall.com - All rights reserved.
+ * @license       GNU/GPL 2 or later
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,17 +24,17 @@
  */
 if (!defined('SMF'))
 {
-	die('You are not allowed to access this file directly');
+    die('You are not allowed to access this file directly');
 }
 
 /**
  * Display the settings in the administraton area
  */
-function template_oneall_social_login_config ()
+function template_oneall_social_login_config()
 {
-	global $txt, $context, $scripturl, $modSettings;
+    global $txt, $context, $scripturl, $modSettings;
 
-	?>
+    ?>
 		<div class="oasl_info_box information">
 			<ul>
 				<li><?php echo $txt['oasl_follow_twitter']; ?>;</li>
@@ -57,7 +57,7 @@ function template_oneall_social_login_config ()
 							<strong><?php echo $txt['oasl_api_connection_method']; ?></strong>
 						</dt>
 						<dd>
-							<input type="radio" id="oasl_api_handler_curl" name="oasl_api_handler" value="use_curl"<?php echo ($modSettings['oasl_api_handler'] <> 'fsockopen' ? ' checked="checked"' : ''); ?> />
+							<input type="radio" id="oasl_api_handler_curl" name="oasl_api_handler" value="use_curl"<?php echo ($modSettings['oasl_api_handler'] != 'fsockopen' ? ' checked="checked"' : ''); ?> />
 							<label for="oasl_api_handler_curl"><?php echo $txt['oasl_api_connection_use_curl']; ?> <strong>(<?php echo $txt['oasl_default']; ?>)</strong></label>
 							<div class="description"><?php echo $txt['oasl_api_connection_use_curl_desc']; ?></div>
 						</dd>
@@ -74,7 +74,7 @@ function template_oneall_social_login_config ()
 							<strong><?php echo $txt['oasl_api_connection_port']; ?></strong>
 						</dt>
 						<dd>
-							<input type="radio" id="oasl_api_port_443" name="oasl_api_port" value="443"<?php echo ($modSettings['oasl_api_port'] <> 80 ? ' checked="checked"' : ''); ?> />
+							<input type="radio" id="oasl_api_port_443" name="oasl_api_port" value="443"<?php echo ($modSettings['oasl_api_port'] != 80 ? ' checked="checked"' : ''); ?> />
 							<label for="oasl_api_port_443"><?php echo $txt['oasl_api_connection_port_443']; ?> <strong>(<?php echo $txt['oasl_default']; ?>)</strong></label>
 							<div class="description"><?php echo $txt['oasl_api_connection_port_443_desc']; ?></div>
 						</dd>
@@ -89,24 +89,24 @@ function template_oneall_social_login_config ()
 				<div>
 					<input type="button" class="oasl_button button_submit" id="oasl_autodetect_button" value="<?php echo $txt['oasl_api_connection_autodetect']; ?>" />
 					<?php
-						if ($modSettings['oasl_action'] == 'autodetect')
-						{
-							switch ($modSettings['oasl_status'])
-							{
-								case 'success':
-									echo '<span class="oasl_success_message">' . $txt['oasl_api_connection_autodetect_success'] . '</span>';
-								break;
+if ($modSettings['oasl_action'] == 'autodetect')
+    {
+        switch ($modSettings['oasl_status'])
+        {
+            case 'success':
+                echo '<span class="oasl_success_message">' . $txt['oasl_api_connection_autodetect_success'] . '</span>';
+                break;
 
-								case 'error':
-									echo '<span class="oasl_error_message">' . $txt['oasl_api_connection_autodetect_error'] . '</span>';
-								break;
-							}
-						}
-						else
-						{
-							echo '<span class="oasl_info_message">' . $txt['oasl_api_connection_autodetect_wait'] . '</span>';
-						}
-					?>
+            case 'error':
+                echo '<span class="oasl_error_message">' . $txt['oasl_api_connection_autodetect_error'] . '</span>';
+                break;
+        }
+    }
+    else
+    {
+        echo '<span class="oasl_info_message">' . $txt['oasl_api_connection_autodetect_wait'] . '</span>';
+    }
+    ?>
 				</div>
 				<span class="botslice"><span></span></span>
 			</div>
@@ -145,41 +145,41 @@ function template_oneall_social_login_config ()
 				<div>
 					<input type="button" class="oasl_button button_submit" id="oasl_verify_button" value="<?php echo $txt['oasl_api_verify']; ?>" />
 					<?php
-						if ($modSettings['oasl_action'] == 'verify')
-						{
-							switch ($modSettings['oasl_status'])
-							{
-								case 'success':
-									echo '<span class="oasl_success_message">' . $txt['oasl_api_verify_success'] . '</span>';
-								break;
+if ($modSettings['oasl_action'] == 'verify')
+    {
+        switch ($modSettings['oasl_status'])
+        {
+            case 'success':
+                echo '<span class="oasl_success_message">' . $txt['oasl_api_verify_success'] . '</span>';
+                break;
 
-								case 'error_not_all_fields_filled_out':
-									echo '<span class="oasl_error_message">' . $txt['oasl_api_verify_missing'] . '</span>';
-								break;
+            case 'error_not_all_fields_filled_out':
+                echo '<span class="oasl_error_message">' . $txt['oasl_api_verify_missing'] . '</span>';
+                break;
 
-								case 'error_communication':
-								case 'error_selected_handler_faulty':
-									echo '<span class="oasl_error_message">' . $txt['oasl_api_verify_error_handler'] . '</span>';
-								break;
+            case 'error_communication':
+            case 'error_selected_handler_faulty':
+                echo '<span class="oasl_error_message">' . $txt['oasl_api_verify_error_handler'] . '</span>';
+                break;
 
-								case 'error_subdomain_wrong':
-									echo '<span class="oasl_error_message">' . $txt['oasl_api_verify_error_subdomain'] . '</span>';
-								break;
+            case 'error_subdomain_wrong':
+                echo '<span class="oasl_error_message">' . $txt['oasl_api_verify_error_subdomain'] . '</span>';
+                break;
 
-								case 'error_subdomain_wrong_syntax':
-									echo '<span class="oasl_error_message">' . $txt['oasl_api_verify_error_syntax'] . '</span>';
-								break;
+            case 'error_subdomain_wrong_syntax':
+                echo '<span class="oasl_error_message">' . $txt['oasl_api_verify_error_syntax'] . '</span>';
+                break;
 
-								case 'error_authentication_credentials_wrong':
-									echo '<span class="oasl_error_message">' . $txt['oasl_api_verify_error_keys'] . '</span>';
-								break;
-							}
-						}
-						else
-						{
-							echo '<span class="oasl_info_message">' . $txt['oasl_api_verify_wait'] . '</span>';
-						}
-						?>
+            case 'error_authentication_credentials_wrong':
+                echo '<span class="oasl_error_message">' . $txt['oasl_api_verify_error_keys'] . '</span>';
+                break;
+        }
+    }
+    else
+    {
+        echo '<span class="oasl_info_message">' . $txt['oasl_api_verify_wait'] . '</span>';
+    }
+    ?>
 				</div>
 				<span class="botslice"><span></span></span>
 			</div>
@@ -193,17 +193,17 @@ function template_oneall_social_login_config ()
 				<div class="content">
 					<dl>
 						<?php
-							foreach ($modSettings['oasl_providers'] AS $provider)
-							{
-								echo '
+foreach ($modSettings['oasl_providers'] as $provider)
+    {
+        echo '
 									<dt class="oasl_provider_row">
 										<label for="oasl_provider_' . $provider . '"><span class="oasl_provider oasl_provider_' . $provider . '">' . ucwords(strtolower($provider)) . '</span></label>
-										<input type="checkbox" id="oasl_provider_ ' . $provider . '" name="oasl_enabled_providers[]" value="' . $provider . '"' . ((in_array($provider, $modSettings['oasl_enabled_providers'])) ? 'checked="checked"' : '') .' />
+										<input type="checkbox" id="oasl_provider_ ' . $provider . '" name="oasl_enabled_providers[]" value="' . $provider . '"' . ((in_array($provider, $modSettings['oasl_enabled_providers'])) ? 'checked="checked"' : '') . ' />
 										<label for="oasl_provider_' . $provider . '">' . $txt['oasl_enable'] . ' <strong>' . ucwords(strtolower($provider)) . '</strong></label>
 									</dd>
 									<dd>&nbsp;</dd>';
-							}
-						?>
+    }
+    ?>
 					</dl>
 				</div>
 				<span class="botslice"><span></span></span>
@@ -290,20 +290,20 @@ function template_oneall_social_login_config ()
 						<dd>
 							<select id="oasl_settings_reg_method" name="oasl_settings_reg_method">
 								<?php
-									$reg_methods = array ('auto', 'system', 'email', 'admin', 'disable');
+$reg_methods = array('auto', 'system', 'email', 'admin', 'disable');
 
-									if (empty ($modSettings['oasl_settings_reg_method']) || ! in_array ($modSettings['oasl_settings_reg_method'], $reg_methods))
-									{
-										$modSettings['oasl_settings_reg_method'] = 'auto';
-									}
+    if (empty($modSettings['oasl_settings_reg_method']) || !in_array($modSettings['oasl_settings_reg_method'], $reg_methods))
+    {
+        $modSettings['oasl_settings_reg_method'] = 'auto';
+    }
 
-									foreach ($reg_methods AS $reg_method)
-									{
-										?>
+    foreach ($reg_methods as $reg_method)
+    {
+        ?>
 											<option value="<?php echo $reg_method; ?>"<?php echo (($modSettings['oasl_settings_reg_method'] == $reg_method) ? ' selected="selected"' : ''); ?>><?php echo $txt['oasl_settings_reg_method_' . $reg_method]; ?></option>
 										<?php
-									}
-								?>
+}
+    ?>
 							</select>
 						</dd>
 					</dl>
