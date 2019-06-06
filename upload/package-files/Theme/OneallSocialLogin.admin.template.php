@@ -86,7 +86,7 @@ function template_oneall_social_login_config()
 						</dd>
 					</dl>
 				</div>
-				<div>
+				<div class="button_container">
 					<input type="button" class="oasl_button button_submit" id="oasl_autodetect_button" value="<?php echo $txt['oasl_api_connection_autodetect']; ?>" />
 					<?php
 if ($modSettings['oasl_action'] == 'autodetect')
@@ -142,7 +142,7 @@ if ($modSettings['oasl_action'] == 'autodetect')
 						</dd>
 					</dl>
 				</div>
-				<div>
+				<div class="button_container">
 					<input type="button" class="oasl_button button_submit" id="oasl_verify_button" value="<?php echo $txt['oasl_api_verify']; ?>" />
 					<?php
 if ($modSettings['oasl_action'] == 'verify')

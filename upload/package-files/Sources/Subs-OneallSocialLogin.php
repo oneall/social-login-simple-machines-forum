@@ -380,7 +380,7 @@ function oneall_social_login_registration()
             loadtemplate('OneallSocialLogin.register');
 
             // Set sub template.
-            $context['sub_template'] = 'oneall_social_login_register';
+            $context['sub_template'] = 'oneall_social_login_registration';
 
             // Set page title.
             $context['page_title'] = $txt['oasl_register_title'];

@@ -60,6 +60,10 @@
   margin-right: 5px;
 }
 
+.button_container{
+  margin-bottom: 20px;
+}
+
 .oasl_provider.oasl_provider_vimeo {
   background-position: -2px -1px;
 }
