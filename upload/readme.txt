@@ -38,6 +38,7 @@ and your users don't have to start from scratch.
 - Mixer
 - Odnoklassniki
 - OpenID
+- Patreon
 - PayPal
 - Pinterest
 - PixelPin

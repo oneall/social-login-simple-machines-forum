@@ -138,7 +138,7 @@ $oasl_settings['oasl_settings_reg_method'] = 'auto';
 $oasl_settings['oasl_settings_allow_login_new'] = '1';
 
 // Available and enabled providers.
-$oasl_settings['oasl_providers'] = 'amazon,battlenet,blogger,discord,disqus,draugiem,dribbble,facebook,foursquare,github,google,instagram,line,linkedin,livejournal,mailru,meetup,mixer,odnoklassniki,openid,paypal,pinterest,pixelpin,reddit,skyrock,soundcloud,stackexchange,steam,tumblr,twitch,twitter,vimeo,vkontakte,weibo,windowslive,wordpress,yahoo,youtube';
+$oasl_settings['oasl_providers'] = 'amazon,battlenet,blogger,discord,disqus,draugiem,dribbble,facebook,foursquare,github,google,instagram,line,linkedin,livejournal,mailru,meetup,mixer,odnoklassniki,openid,patreon,paypal,pinterest,pixelpin,reddit,skyrock,soundcloud,stackexchange,steam,tumblr,twitch,twitter,vimeo,vkontakte,weibo,windowslive,wordpress,yahoo,youtube';
 $oasl_settings['oasl_enabled_providers'] = 'facebook,twitter,google,linkedin';
 
 // Update settings.
