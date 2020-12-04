@@ -4,7 +4,7 @@
 	<id>OneAll:OneAllSocialLogin</id>
 	<name>Social Login</name>
 	<type>modification</type>
-	<version>3.9.0</version>	    
+	<version>3.10.0</version>	    
 	<install>	
 		<!-- Readme -->
 		<readme parsebbc="true">readme.txt</readme>			

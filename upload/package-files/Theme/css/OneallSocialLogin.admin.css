@@ -100,10 +100,6 @@
   background-position: -113px -1px;
 }
 
-.oasl_provider.oasl_provider_google {
-  background-position: -150px -1px;
-}
-
 .oasl_provider.oasl_provider_reddit {
   background-position: -187px -1px;
 }
@@ -221,4 +217,8 @@
 
 .oasl_provider.oasl_provider_patreon {
     background-position: -1630px -1px;
+}
+
+.oa_social_login_provider_apple {
+    background-position: -1741px -1px;
 }
