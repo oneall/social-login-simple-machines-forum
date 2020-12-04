@@ -1,6 +1,6 @@
 [size=20pt]OneAll Social Login[/size]
 
-OneAll Social Login for SMF 2.0.x is a professional modification that allows
+OneAll Social Login for SMF 2.1+ is a professional modification that allows
 your visitors to login and register with 40+ social networks like for example
 Facebook, Twitter, LinkedIn, Google+, LiveJournal, StackExchange and Yahoo 
 amongst others.
@@ -19,6 +19,7 @@ and your users don't have to start from scratch.
 
 [b]40+ Supported Social Networks[/b]
 - Amazon
+- Apple
 - Battle.net
 - Blogger
 - Discord

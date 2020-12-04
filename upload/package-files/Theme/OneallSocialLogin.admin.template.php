@@ -200,8 +200,7 @@ foreach ($modSettings['oasl_providers'] as $provider)
 										<label for="oasl_provider_' . $provider . '"><span class="oasl_provider oasl_provider_' . $provider . '">' . ucwords(strtolower($provider)) . '</span></label>
 										<input type="checkbox" id="oasl_provider_ ' . $provider . '" name="oasl_enabled_providers[]" value="' . $provider . '"' . ((in_array($provider, $modSettings['oasl_enabled_providers'])) ? 'checked="checked"' : '') . ' />
 										<label for="oasl_provider_' . $provider . '">' . $txt['oasl_enable'] . ' <strong>' . ucwords(strtolower($provider)) . '</strong></label>
-									</dd>
-									<dd>&nbsp;</dd>';
+									</dd>';
     }
     ?>
 					</dl>
