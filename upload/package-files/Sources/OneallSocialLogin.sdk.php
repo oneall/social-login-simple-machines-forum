@@ -28,7 +28,7 @@ if (!defined('SMF'))
 }
 
 // OneAll Social Login Version
-define('OASL_VERSION', '3.8');
+define('OASL_VERSION', '4.3.0');
 define('OASL_USER_AGENT', 'SocialLogin/' . OASL_VERSION . ' SMF/2.x.x (+http://www.oneall.com/)');
 
 /**

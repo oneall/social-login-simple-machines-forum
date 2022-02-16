@@ -263,17 +263,6 @@ function template_oneall_social_login()
 	</operation>
 	<operation>
 		<search position="before"><![CDATA[<a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a>
-					</p>
-					<input type="hidden" name="hash_passwrd" value="">]]></search>
-		<add><![CDATA[';
-							
-	// OneAll Social Login (https://docs.oneall.com/plugins/)
-	template_oneall_social_login();
-			
-	echo ']]></add>
-	</operation>
-	<operation>
-		<search position="before"><![CDATA[<a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a>
 				</p>
 			</div>]]></search>
 		<add><![CDATA[';
