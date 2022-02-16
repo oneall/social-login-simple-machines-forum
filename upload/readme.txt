@@ -18,14 +18,15 @@ and your users don't have to start from scratch.
 
 
 [b]40+ Supported Social Networks[/b]
-- Amazon
 - Apple
+- Amazon
 - Battle.net
 - Blogger
-- Discord
+- Discord 
 - Disqus
 - Draugiem
 - Dribbble
+- Epic Games
 - Facebook
 - Foursquare
 - Github.com
@@ -42,12 +43,14 @@ and your users don't have to start from scratch.
 - Patreon
 - PayPal
 - Pinterest
-- PixelPin
+- PixelPin 
 - Reddit
 - Skyrock.com
-- SoundCloud
+- SoundCloud        
+- Spotify
 - StackExchange
 - Steam
+- Strava
 - Tumblr
 - Twitch.tv
 - Twitter
@@ -56,8 +59,9 @@ and your users don't have to start from scratch.
 - Weibo
 - Windows Live
 - WordPress.com
-- Xing
+- XING
 - Yahoo
+- Yandex
 - YouTube
 
 

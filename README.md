@@ -3,7 +3,7 @@
 * [Social Login for Simple Machines Forum 2.0+](https://github.com/oneall/social-login-simple-machines-forum/tree/smf/2.0+)
 * **Social Login for Simple Machines Forum 2.1+**
 
-# Social Login 4.2.0 for SMF 2.1+
+# Social Login 4.3.0 for SMF 2.1+
 Social Login for Simple Machines Forum allows your users to login and register with 35+ social networks. 
 It increases your SMF user registration rate by simplifying the registration process for 
 new users and provides permission-based social data retrieved from the social network profiles.
@@ -16,14 +16,15 @@ http://docs.oneall.com/plugins/guide/social-login-smf/
 http://custom.simplemachines.org/mods/index.php?mod=3580
 
 ## Supported Social Networks
-* Amazon
 * Apple
+* Amazon
 * Battle.net
 * Blogger
-* Discord
+* Discord 
 * Disqus
 * Draugiem
 * Dribbble
+* Epic Games
 * Facebook
 * Foursquare
 * Github.com
@@ -40,12 +41,14 @@ http://custom.simplemachines.org/mods/index.php?mod=3580
 * Patreon
 * PayPal
 * Pinterest
-* PixelPin
+* PixelPin 
 * Reddit
 * Skyrock.com
-* SoundCloud
+* SoundCloud        
+* Spotify
 * StackExchange
 * Steam
+* Strava
 * Tumblr
 * Twitch.tv
 * Twitter
@@ -54,8 +57,9 @@ http://custom.simplemachines.org/mods/index.php?mod=3580
 * Weibo
 * Windows Live
 * WordPress.com
-* Xing
+* XING
 * Yahoo
+* Yandex
 * YouTube
 
 
