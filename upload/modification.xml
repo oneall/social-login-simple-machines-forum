@@ -262,7 +262,8 @@ function template_oneall_social_login()
 ]]></add>
 	</operation>
 	<operation>
-		<search position="before"><![CDATA[<a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a>
+		<search position="before"><![CDATA[<p class="smalltext">
+						<a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a>
 					</p>]]></search>
 		<add><![CDATA[';
 							
