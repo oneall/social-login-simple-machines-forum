@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.3.1] - 2023-11-20
+### Fix
+Fix crash when registration/setup
+
 ## [4.3.0] - 2022-02-16
 ### Added
 New providers added :
