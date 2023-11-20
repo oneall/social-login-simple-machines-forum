@@ -557,7 +557,9 @@ function oneall_social_login_create_user(array $data)
         //About Me - Replace line breaks with a spaces
         $data['user_about_me'] = preg_replace("/\r\n|\r|\n/", ' ', $data['user_about_me']);
         $data['user_about_me'] = trim(preg_replace("/\s\s+/", ' ', $data['user_about_me']));
-        $regOptions['extra_register_vars']['personal_text'] = $data['user_about_me'];
+
+        // Use to encode specific characters that crash registration
+        $regOptions['extra_register_vars']['personal_text'] = mb_convert_encoding($data['user_about_me'], 'UTF-8', 'UTF-8');
 
         // Setup birthdate (Regexp taken from:/Sources/Subs-Db-mysql.php)
         if (preg_match('~^(\d{4})-([0-1]?\d)-([0-3]?\d)$~', $data['user_birthdate']) === 1)

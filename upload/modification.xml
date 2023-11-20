@@ -52,7 +52,7 @@ $txt['oasl_user_require_activation'] = 'Your account has been created but it nee
 					'label' => $txt['oasl_config'],
 					'file' => 'Subs-OneallSocialLogin.php',
 					'function' => 'oneall_social_login_config',
-					'custom_url' => $scripturl . '?action=admin;area=oasl;sa=settings;sesc=' . $sc,
+					'custom_url' => $scripturl . '?action=admin;area=oasl;sa=settings;sesc='. $context['session_id'],
 					'icon' => 'server.gif'	
 				)	
 			)
